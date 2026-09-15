@@ -1,0 +1,34 @@
+# CMake and generated Axial outputs
+/build/
+/.build/
+/CMakeUserPresets.json
+cmake-build-*/
+*.dSYM/
+*.o
+*.a
+*.dylib
+*.app/
+*.framework/
+*.pkg
+
+# Xcode and Swift Package Manager user/build state
+DerivedData/
+xcuserdata/
+*.xcuserstate
+.swiftpm/
+Package.resolved
+
+# macOS metadata and editor state
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon\r
+._*
+.idea/
+.vscode/
+
+# Local logs, coverage and profiling output
+*.log
+*.profraw
+*.profdata
+coverage/

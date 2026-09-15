@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>Label</key><string>pro.jest.service</string>
+<key>BundleProgram</key><string>Contents/Library/Helpers/Axial Service.app/Contents/MacOS/axial-service</string>
+<key>RunAtLoad</key><false/>
+<key>ProcessType</key><string>Interactive</string>
+<key>KeepAlive</key><false/>
+<key>ThrottleInterval</key><integer>3</integer>
+<key>LimitLoadToSessionType</key><string>Aqua</string>
+</dict></plist>

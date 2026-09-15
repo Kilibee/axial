@@ -1,0 +1,20 @@
+# Xcode supplies per-architecture Swift invocations. Ninja needs an explicit
+# target triple on both compilation and linking; OSX_ARCHITECTURES alone does
+# not select the Swift driver target. Build-time tools use the host triple.
+function(axial_swift_platform target)
+  if(CMAKE_GENERATOR STREQUAL "Xcode")
+    return()
+  endif()
+  if(ARGC GREATER 1)
+    set(architectures "${ARGV1}")
+  else()
+    set(architectures "${CMAKE_OSX_ARCHITECTURES}")
+  endif()
+  list(LENGTH architectures count)
+  if(NOT count EQUAL 1)
+    message(FATAL_ERROR "Use the xcode preset for universal Swift builds")
+  endif()
+  set(triple "${architectures}-apple-macos${CMAKE_OSX_DEPLOYMENT_TARGET}")
+  target_compile_options(${target} PRIVATE -target "${triple}")
+  target_link_options(${target} PRIVATE -target "${triple}")
+endfunction()

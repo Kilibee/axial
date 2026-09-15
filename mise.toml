@@ -1,0 +1,117 @@
+[tools]
+cmake = "4.4.3"
+ninja = "1.13.2"
+
+# These tasks delegate to CMake; target definitions and build logic live there.
+[tasks.configure]
+description = "Configure the native CMake build"
+alias = "cfg"
+run = "cmake --preset native"
+
+[tasks.build]
+description = "Configure and build the native app, service, frameworks and tests"
+alias = "b"
+depends = ["configure"]
+run = "cmake --build --preset native"
+
+[tasks.test]
+description = "Build and run all native tests (requires a GUI session)"
+alias = "t"
+depends = ["build"]
+run = "ctest --preset native"
+
+[tasks."test:headless"]
+description = "Build and run tests excluding GUI startup checks"
+depends = ["build"]
+run = "ctest --preset native -LE gui"
+
+[tasks."build:intel"]
+description = "Configure and build for Intel x86_64"
+run = ["cmake --preset intel", "cmake --build --preset intel"]
+
+[tasks."test:intel"]
+description = "Build and test x86_64 (requires Rosetta on Apple Silicon)"
+depends = ["build:intel"]
+run = "ctest --preset intel"
+
+[tasks."build:sanitizers"]
+description = "Build native targets with AddressSanitizer and UndefinedBehaviorSanitizer"
+run = ["cmake --preset sanitizers", "cmake --build --preset sanitizers"]
+
+[tasks."test:sanitizers"]
+description = "Build and run memory and undefined-behavior checks"
+alias = "sanitize"
+depends = ["build:sanitizers"]
+run = "ctest --preset sanitizers"
+
+[tasks."configure:xcode"]
+description = "Generate the universal Xcode project (requires full Xcode)"
+run = "cmake --preset xcode"
+
+[tasks.xcode]
+description = "Generate and open the universal Xcode project"
+depends = ["configure:xcode"]
+run = "open build/xcode/Axial.xcodeproj"
+
+[tasks."build:xcode"]
+description = "Build universal Release binaries with Xcode"
+depends = ["configure:xcode"]
+run = "cmake --build --preset xcode"
+
+[tasks."test:xcode"]
+description = "Build and test the Xcode Release configuration"
+depends = ["build:xcode"]
+run = "ctest --preset xcode"
+
+[tasks.benchmark]
+description = "Measure mock input latency under normal and contended load"
+alias = "bench"
+depends = ["configure"]
+run = "cmake --build --preset native --target benchmark"
+
+[tasks.package]
+description = "Build and verify the native macOS installer payload"
+alias = "pkg"
+depends = ["build"]
+run = "cpack --preset native"
+
+[tasks."package:xcode"]
+description = "Build and verify a universal macOS installer"
+depends = ["build:xcode"]
+run = "cpack --preset xcode"
+
+[tasks.stage]
+description = "Build and stage installation under build/stage without administrator access"
+depends = ["build"]
+run = 'cmake --install build/native --prefix "$PWD/build/stage"'
+
+[tasks."stage:xcode"]
+description = "Build and stage the universal Release installation under build/stage-xcode"
+depends = ["build:xcode"]
+run = 'cmake --install build/xcode --config Release --prefix "$PWD/build/stage-xcode"'
+
+[tasks.install]
+description = "Build and install system-wide with sudo; quit Axial and CAD apps first"
+depends = ["build"]
+raw = true
+run = 'sudo "$(command -v cmake)" --install build/native'
+
+[tasks."install:xcode"]
+description = "Build and install universal Release with sudo; quit Axial and CAD apps first"
+depends = ["build:xcode"]
+raw = true
+run = 'sudo "$(command -v cmake)" --install build/xcode --config Release'
+
+[tasks.uninstall]
+description = "Remove installed Axial with sudo, retaining profiles; disable login and quit first"
+raw = true
+run = "sudo bash tools/uninstall.sh"
+
+[tasks.run]
+description = "Build and open the development app; quit the installed Axial first"
+depends = ["build"]
+run = "open build/native/bin/Axial.app"
+
+[tasks.clean]
+description = "Remove all generated builds, packages and benchmark results"
+run = "cmake -E rm -rf build"

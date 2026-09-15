@@ -1,0 +1,8 @@
+Axial adds native SpaceMouse support to macOS.
+
+Uninstall the 3Dconnexion driver before installing Axial. When updating, quit
+Axial and close CAD applications first.
+
+After installation, open Axial from Applications. Its menu-bar icon opens the
+settings window. Allow Axial in macOS Accessibility settings to use keyboard
+shortcuts. For Autodesk Fusion, select the Latest SpaceMouse driver.

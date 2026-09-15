@@ -1,0 +1,41 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 29, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "native", "displayName": "Native macOS development", "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/native",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo", "CMAKE_INSTALL_PREFIX": "/" }
+    },
+    {
+      "name": "intel", "displayName": "Intel macOS", "inherits": "native",
+      "binaryDir": "${sourceDir}/build/intel", "cacheVariables": { "CMAKE_OSX_ARCHITECTURES": "x86_64" }
+    },
+    {
+      "name": "sanitizers", "displayName": "Native memory and undefined-behavior checks", "inherits": "native",
+      "binaryDir": "${sourceDir}/build/sanitizers",
+      "cacheVariables": { "AXIAL_SANITIZERS": "ON", "AXIAL_BUILD_APP": "OFF" }
+    },
+    {
+      "name": "xcode", "displayName": "Universal macOS Xcode project", "generator": "Xcode",
+      "binaryDir": "${sourceDir}/build/xcode",
+      "cacheVariables": { "CMAKE_OSX_ARCHITECTURES": "arm64;x86_64", "CMAKE_INSTALL_PREFIX": "/", "CMAKE_XCODE_GENERATE_SCHEME": "ON" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "native", "configurePreset": "native", "jobs": 4 },
+    { "name": "intel", "configurePreset": "intel", "jobs": 4 },
+    { "name": "sanitizers", "configurePreset": "sanitizers", "jobs": 4 },
+    { "name": "xcode", "configurePreset": "xcode", "configuration": "Release", "jobs": 4 }
+  ],
+  "testPresets": [
+    { "name": "native", "configurePreset": "native", "output": { "outputOnFailure": true } },
+    { "name": "intel", "configurePreset": "intel", "output": { "outputOnFailure": true } },
+    { "name": "sanitizers", "configurePreset": "sanitizers", "output": { "outputOnFailure": true }, "environment": { "ASAN_OPTIONS": "halt_on_error=1", "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1" } },
+    { "name": "xcode", "configurePreset": "xcode", "configuration": "Release", "output": { "outputOnFailure": true } }
+  ],
+  "packagePresets": [
+    { "name": "native", "configurePreset": "native", "generators": ["productbuild"] },
+    { "name": "xcode", "configurePreset": "xcode", "configurations": ["Release"], "generators": ["productbuild"] }
+  ]
+}

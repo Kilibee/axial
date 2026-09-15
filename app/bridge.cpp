@@ -1,0 +1,111 @@
+#include "axial/transport.hpp"
+#include <cstdlib>
+#include <cstring>
+#include <atomic>
+#include <thread>
+#include <mutex>
+#include <chrono>
+#include <pthread/qos.h>
+extern "C" char* AxialRequest(const char* request) {
+    if(!request)return nullptr;auto result=sn::request(request);
+    return strdup(result.c_str());
+}
+extern "C" uint32_t AxialDeviceCount(){return uint32_t(std::size(sn::devices));}
+extern "C" uint32_t AxialDeviceIdentity(uint32_t index){
+    if(index>=std::size(sn::devices))return 0;
+    const auto& d=sn::devices[index];return uint32_t(d.vendor)<<16|d.product;
+}
+extern "C" const char* AxialDeviceName(uint32_t identity){
+    auto d=sn::deviceSpec(uint16_t(identity>>16),uint16_t(identity));return d?d->name:nullptr;
+}
+extern "C" const char* AxialDeviceButtonName(uint32_t identity,uint32_t slot){
+    auto d=sn::deviceSpec(uint16_t(identity>>16),uint16_t(identity));auto b=d?d->button(slot):nullptr;return b?b->name:nullptr;
+}
+extern "C" uint32_t AxialDeviceButtonSlots(uint32_t identity,uint8_t* slots,uint32_t capacity){
+    auto d=sn::deviceSpec(uint16_t(identity>>16),uint16_t(identity));if(!d||!slots||capacity<d->buttons.size())return 0;
+    for(size_t i=0;i<d->buttons.size();++i)slots[i]=d->buttons[i].slot;return uint32_t(d->buttons.size());
+}
+
+namespace {
+struct PreviewSlot {
+    std::atomic<uint64_t> version{0},timestamp{0};
+    std::atomic<uint32_t> device{0},buttons{0},identity{0};
+    std::array<std::atomic<int16_t>,6> axes{};
+};
+struct ButtonLog {uint64_t timestamp=0;uint32_t device=0,changed=0,buttons=0,reason=0,identity=0;};
+struct Preview {
+    std::array<PreviewSlot,16> slots;
+    std::array<ButtonLog,4096> log;
+    std::atomic<size_t> read{0},write{0};
+    std::atomic<uint64_t> lost{0};
+    std::atomic<bool> running{false};
+    std::thread worker;
+    std::mutex lifecycle, startStop;
+    int fd=-1;
+    void append(uint64_t time,uint32_t device,uint32_t changed,uint32_t buttons,uint32_t reason,uint32_t identity){
+        if(!changed)return;size_t w=write.load(std::memory_order_relaxed);
+        if(w-read.load(std::memory_order_acquire)==log.size()){++lost;return;}
+        log[w%log.size()]={time,device,changed,buttons,reason,identity};write.store(w+1,std::memory_order_release);
+    }
+    void clear(uint32_t device=0,uint32_t reason=uint32_t(sn::Kind::reset)){
+        for(auto& slot:slots)if(slot.device.load()&&(!device||slot.device.load()==device)){
+            if(reason==uint32_t(sn::Kind::removed))append(sn::now(),slot.device.load(),slot.buttons.load(),0,reason,slot.identity.load());
+            slot.version.fetch_add(1,std::memory_order_acq_rel);for(auto& axis:slot.axes)axis=0;slot.timestamp=0;
+            if(reason==uint32_t(sn::Kind::removed)){slot.buttons=0;slot.device=0;slot.identity=0;}
+            slot.version.fetch_add(1,std::memory_order_release);
+        }
+    }
+    void receive(const sn::Event& event){
+        if(event.kind==sn::Kind::reset||event.kind==sn::Kind::removed){clear(event.device,uint32_t(event.kind));return;}
+        if(!event.device)return;
+        PreviewSlot* selected=nullptr;
+        for(auto& slot:slots)if(slot.device.load()==event.device){selected=&slot;break;}
+        if(!selected)for(auto& slot:slots)if(!slot.device.load()){selected=&slot;break;}
+        if(!selected)return;auto& slot=*selected;
+        uint32_t identity=uint32_t(event.vendor)<<16|event.product;
+        if(!identity)identity=slot.identity.load();
+        if(event.kind==sn::Kind::buttons)append(event.received,event.device,slot.buttons.load()^event.buttons,event.buttons,uint32_t(event.kind),identity);
+        slot.version.fetch_add(1,std::memory_order_acq_rel);slot.device=event.device;slot.buttons=event.buttons;slot.identity=identity;
+        if(event.kind==sn::Kind::motion){for(int i=0;i<6;++i)slot.axes[i]=event.axes[i];slot.timestamp=event.received;}
+        slot.version.fetch_add(1,std::memory_order_release);
+    }
+    void start(){
+        std::lock_guard call(startStop);
+        if(running.exchange(true))return;
+        worker=std::thread([this]{pthread_setname_np("Axial live preview");pthread_set_qos_class_self_np(QOS_CLASS_USER_INTERACTIVE,0);
+            while(running.load()){
+                int connected=sn::openEvents(sn::Flags::monitor);
+                if(connected<0){for(int i=0;i<10&&running;++i)std::this_thread::sleep_for(std::chrono::milliseconds(100));continue;}
+                {std::lock_guard lock(lifecycle);fd=connected;if(!running)shutdown(fd,SHUT_RDWR);}
+                sn::Event event;
+                while(running&&sn::readAll(connected,&event,sizeof(event))&&sn::valid(event))receive(event);
+                {std::lock_guard lock(lifecycle);::close(connected);fd=-1;}
+                clear(0,uint32_t(sn::Kind::removed));
+            }
+        });
+    }
+    void stop(){std::lock_guard call(startStop);running=false;{std::lock_guard lock(lifecycle);if(fd>=0)shutdown(fd,SHUT_RDWR);}if(worker.joinable())worker.join();}
+    ~Preview(){stop();}
+};
+Preview preview;
+}
+extern "C" void AxialPreviewStart(){preview.start();}
+extern "C" void AxialPreviewStop(){preview.stop();}
+extern "C" uint64_t AxialPreviewNow(){return sn::now();}
+extern "C" uint64_t AxialPreviewLostLogs(){return preview.lost.load();}
+extern "C" bool AxialPreviewRead(uint32_t device,double* axes,uint32_t* buttons){
+    if(!axes||!buttons)return false;
+    for(auto& slot:preview.slots)if(slot.device.load()&&(!device||slot.device.load()==device)){
+        for(int attempt=0;attempt<3;++attempt){uint64_t version=slot.version.load(std::memory_order_acquire);if(version&1)continue;
+            uint32_t found=slot.device.load();uint64_t timestamp=slot.timestamp.load();for(int i=0;i<6;++i)axes[i]=slot.axes[i].load();*buttons=slot.buttons.load();
+            if(slot.version.load(std::memory_order_acquire)==version&&found&&(!device||found==device)){if(!timestamp||sn::now()-timestamp>250000000)for(int i=0;i<6;++i)axes[i]=0;return true;}
+        }
+    }
+    for(int i=0;i<6;++i)axes[i]=0;*buttons=0;return false;
+}
+extern "C" bool AxialPreviewPopLog(uint64_t* timestamp,uint32_t* device,uint32_t* changed,uint32_t* buttons,uint32_t* reason,uint32_t* identity){
+    if(!timestamp||!device||!changed||!buttons||!reason||!identity)return false;
+    size_t r=preview.read.load(std::memory_order_relaxed);if(r==preview.write.load(std::memory_order_acquire))return false;
+    const auto& event=preview.log[r%preview.log.size()];*timestamp=event.timestamp;*device=event.device;*changed=event.changed;*buttons=event.buttons;*reason=event.reason;*identity=event.identity;
+    preview.read.store(r+1,std::memory_order_release);return true;
+}
