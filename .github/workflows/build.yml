@@ -1,0 +1,76 @@
+name: Build and validate
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            xcode: 26
+          - runner: macos-15-intel
+            xcode: 26
+          - runner: macos-26
+            xcode: 26
+          - runner: macos-26-intel
+            xcode: 26
+          - runner: xcode-27
+            xcode: 27
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2
+      - name: Build, test and package
+        run: bash tools/ci-build.sh "$XCODE_MAJOR"
+        env:
+          XCODE_MAJOR: ${{ matrix.xcode }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: build-${{ matrix.runner }}
+          path: build/release/
+          if-no-files-found: error
+          retention-days: 14
+  runtime:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-14, macos-15, macos-15-intel, macos-26, macos-26-intel, xcode-27]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: build-macos-15
+          path: release
+      - name: Test canonical universal payload
+        working-directory: release
+        run: |
+          tar -xzf release-tests.tar.gz
+          bash ci-runtime.sh
+      - name: Test Homebrew install and uninstall
+        if: matrix.runner == 'macos-15' || matrix.runner == 'macos-15-intel'
+        run: bash tools/ci-cask.sh
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: matrix.runner == 'macos-15'
+        with:
+          name: release-metadata
+          path: release/receipts.json
+          if-no-files-found: error
+  gui:
+    needs: build
+    runs-on: macos-15
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: build-macos-15
+      - run: |
+          tar -xzf release-tests.tar.gz
+          ./tests/startup-tests

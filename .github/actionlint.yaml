@@ -1,0 +1,3 @@
+# Explicit hosted labels added after actionlint 1.7.7's runner inventory.
+self-hosted-runner:
+  labels: [macos-15-intel, macos-26, macos-26-intel, xcode-27]

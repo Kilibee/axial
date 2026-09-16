@@ -1,0 +1,84 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: axial-release
+  cancel-in-progress: false
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - id: version
+        env:
+          RELEASE_REF: ${{ github.ref }}
+        run: |
+          [[ "$RELEASE_REF" =~ ^refs/tags/v([0-9]+\.[0-9]+\.[0-9]+)$ ]]
+          version="${BASH_REMATCH[1]}"
+          configured=$(sed -n 's/project(Axial VERSION \([^ ]*\).*/\1/p' CMakeLists.txt)
+          [[ "$version" == "$configured" ]]
+          git merge-base --is-ancestor HEAD origin/main
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+  validate:
+    needs: version
+    uses: ./.github/workflows/build.yml
+  publish:
+    needs: [version, validate]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: build-macos-15
+          path: release
+      - name: Publish immutable release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: bash tools/publish-release.sh
+  homebrew:
+    needs: [version, publish]
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: release-metadata
+          path: release
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: consi/homebrew
+          ref: main
+          path: tap
+          ssh-key: ${{ secrets.HOMEBREW_DEPLOY_KEY }}
+      - name: Validate and publish cask
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          gh release download "v$VERSION" --repo consi/axial --dir release --pattern '*.pkg' --pattern SHA256SUMS
+          bash tools/generate-cask.sh "$VERSION" release tap/Casks/axial.rb
+          ruby -c tap/Casks/axial.rb
+          git -C tap config user.name 'github-actions[bot]'
+          git -C tap config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C tap add Casks/axial.rb
+          if ! git -C tap diff --cached --quiet; then
+            git -C tap commit -m "axial $VERSION"
+          fi
+          brew tap --custom-remote consi/homebrew "$PWD/tap"
+          brew style --cask consi/homebrew/axial
+          brew fetch --cask consi/homebrew/axial
+          brew install --cask consi/homebrew/axial
+          brew uninstall --cask consi/homebrew/axial
+          git -C tap push origin HEAD:main

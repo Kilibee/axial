@@ -1,0 +1,38 @@
+cask "axial" do
+  version "@VERSION@"
+  sha256 "@SHA256@"
+
+  url "@URL@"
+  name "Axial"
+  desc "Native SpaceMouse and SpaceExplorer driver"
+  homepage "https://github.com/consi/axial"
+
+  depends_on macos: ">= :ventura"
+
+  pkg "Axial-#{version}-universal.pkg"
+
+  uninstall_preflight do
+    {
+      "/Applications/Axial.app/Contents/Info.plist" => "pro.jest.Axial",
+      "/Library/Frameworks/3DconnexionClient.framework/Resources/Info.plist" => "pro.jest.3DconnexionClient",
+      "/Library/Frameworks/3DconnexionNavlib.framework/Resources/Info.plist" => "pro.jest.3DconnexionNavlib",
+    }.each do |plist, expected|
+      bundle = plist.split(%r{/(?:Contents|Resources)/}).first
+      next unless File.exist?(bundle) || File.symlink?(bundle)
+
+      actual = system_command("/usr/libexec/PlistBuddy", args: ["-c", "Print :CFBundleIdentifier", plist]).stdout.strip
+      raise "Refusing to remove non-Axial bundle: #{bundle}" unless actual == expected
+    end
+  end
+
+  uninstall quit:    "pro.jest.Axial",
+            pkgutil: @RECEIPTS@
+
+  caveats <<~EOS
+    Uninstall the 3Dconnexion driver and quit Axial and CAD apps before installing or upgrading.
+    This installer requires administrator access. Binaries are ad-hoc signed; the package is not notarized.
+    macOS may require approval in Privacy & Security before Axial can run.
+    Open /Applications/Axial.app after installation and grant Accessibility access for shortcuts.
+    Disable Start at login and quit Axial before uninstalling. Saved profiles are retained.
+  EOS
+end

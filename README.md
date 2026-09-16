@@ -16,6 +16,34 @@ a replacement, a perfectly usable SpaceExplorer would become unusable after the
 upgrade. Axial keeps the device useful with a native ARM64 and Intel
 implementation that does not depend on the vendor's discontinued driver.
 
+## Install through Homebrew
+
+Install the universal Apple Silicon/Intel release on macOS 13 or later:
+
+```sh
+brew tap consi/homebrew https://github.com/consi/homebrew
+brew install --cask consi/homebrew/axial
+open /Applications/Axial.app
+```
+
+Uninstall the 3Dconnexion driver first, and quit Axial and CAD applications before
+installing or upgrading. The installer places the app in `/Applications` and its
+compatibility frameworks in `/Library/Frameworks`; administrator access is required.
+Both framework architectures are included for native and Rosetta CAD applications.
+Grant Axial Accessibility permission to use keyboard shortcuts.
+
+Release binaries are ad-hoc signed; the installer is not Developer ID signed or
+notarized. macOS may require approval in **System Settings → Privacy & Security**
+before Axial can run. Do not disable Gatekeeper system-wide.
+
+```sh
+brew update
+brew upgrade --cask consi/homebrew/axial
+```
+
+To uninstall, disable **Start at login**, quit Axial and CAD applications, then run
+`brew uninstall --cask consi/homebrew/axial`. Saved profiles are retained.
+
 ## Build
 
 Development tools and commands are managed by [mise](https://mise.jdx.dev/).

@@ -115,3 +115,25 @@ cmake --install build/native --prefix "$PWD/build/stage"
 Native builds contain one CPU architecture; universal releases use the Xcode
 preset. The public framework names and ABI must remain compatible with clients.
 Custom developer settings belong in ignored `CMakeUserPresets.json`.
+
+## Releases
+
+CI and releases share `.github/workflows/build.yml`. The macOS 15 ARM build is
+the canonical universal package; other jobs validate toolchains and run the exact
+canonical payload. GUI startup is a separate advisory check. Homebrew installation
+tests run only on disposable GitHub runners, never on a developer machine.
+
+Update the CMake project version and `tools/release-notes.md`, push to `main`, and
+wait for CI before pushing the matching `vMAJOR.MINOR.PATCH` tag. Releases reject
+version mismatches and commits outside `main`. The release job publishes the
+verified package and SHA256SUMS, then a separate job updates `consi/homebrew`.
+Release automation uses Bash and runner-provided jq; Python is not required.
+
+`HOMEBREW_DEPLOY_KEY` must contain the private half of a writable deploy key scoped
+to `consi/homebrew`. The built-in GitHub token publishes Axial releases. No Apple
+signing credentials are needed for the current ad-hoc releases.
+
+Retry a failed job through Actions. Published assets are immutable: differing
+bytes fail instead of being overwritten. For a Homebrew-only failure, rerun that
+job to reuse the original artifacts. Older tags cannot downgrade the tap. A full
+rebuild may produce different package bytes; do not replace an existing release.

@@ -125,6 +125,7 @@ if(AXIAL_BUILD_APP AND NOT AXIAL_SANITIZERS)
   set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "Axial")
   set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "SpaceMouse service, settings app and compatibility frameworks")
   set(CPACK_COMPONENT_RUNTIME_REQUIRED TRUE)
+  set(CPACK_PREFLIGHT_RUNTIME_SCRIPT "${CMAKE_SOURCE_DIR}/tools/package-preinstall.sh")
   # productbuild requires a supported extension for displayed installer resources.
   configure_file(LICENSE "${CMAKE_BINARY_DIR}/generated/License.txt" COPYONLY)
   set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_BINARY_DIR}/generated/License.txt")
