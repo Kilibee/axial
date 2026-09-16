@@ -7,7 +7,7 @@ output="${3:?output cask required}"
 package="Axial-$version-universal.pkg"
 digest=$(shasum -a 256 "$directory/$package" | awk '{print $1}')
 [[ $(cat "$directory/SHA256SUMS") == "$digest  $package" ]]
-receipts=$(jq -ce 'select(length > 0 and all(.[]; test("^pro\\.jest\\.[A-Za-z0-9_.-]+$")))' "$directory/receipts.json")
+receipts=$(jq -ce 'select(length > 0 and all(.[]; test("^pro\\.jest\\.[A-Za-z0-9_.-]+$"))) | if length == 1 then .[0] else . end' "$directory/receipts.json")
 if [[ -f "$output" ]]; then
   previous=$(sed -n 's/^  version "\([0-9.]*\)"/\1/p' "$output")
   [[ -n "$previous" && $(printf '%s\n%s\n' "$previous" "$version" | sort -V | tail -1) == "$version" ]] || {

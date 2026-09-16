@@ -2,6 +2,7 @@
 foreach(tool IN ITEMS make-icon convert-toycar)
   add_executable(${tool} EXCLUDE_FROM_ALL "tools/${tool}.swift")
   axial_swift_platform(${tool} "${CMAKE_HOST_SYSTEM_PROCESSOR}")
+  target_compile_options(${tool} PRIVATE -parse-as-library)
   set_target_properties(${tool} PROPERTIES OSX_ARCHITECTURES "${CMAKE_HOST_SYSTEM_PROCESSOR}" FOLDER "Build tools")
 endforeach()
 file(GLOB toycar_sources CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/third_party/toycar/source/*")

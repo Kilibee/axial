@@ -11,18 +11,26 @@ cask "axial" do
 
   pkg "Axial-#{version}-universal.pkg"
 
-  uninstall_preflight do
-    {
-      "/Applications/Axial.app/Contents/Info.plist" => "pro.jest.Axial",
-      "/Library/Frameworks/3DconnexionClient.framework/Resources/Info.plist" => "pro.jest.3DconnexionClient",
-      "/Library/Frameworks/3DconnexionNavlib.framework/Resources/Info.plist" => "pro.jest.3DconnexionNavlib",
-    }.each do |plist, expected|
-      bundle = plist.split(%r{/(?:Contents|Resources)/}).first
-      next unless File.exist?(bundle) || File.symlink?(bundle)
-
-      actual = system_command("/usr/libexec/PlistBuddy", args: ["-c", "Print :CFBundleIdentifier", plist]).stdout.strip
-      raise "Refusing to remove non-Axial bundle: #{bundle}" unless actual == expected
-    end
+  uninstall_preflight_steps do
+    run "/bin/bash", args: ["-c", <<~'SHELL']
+      set -euo pipefail
+      for name in Axial 3DconnexionClient 3DconnexionNavlib; do
+        if [[ "$name" == Axial ]]; then
+          bundle=/Applications/Axial.app
+          plist="$bundle/Contents/Info.plist"
+        else
+          bundle="/Library/Frameworks/$name.framework"
+          plist="$bundle/Resources/Info.plist"
+        fi
+        if [[ -e "$bundle" || -L "$bundle" ]]; then
+          identity=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$plist")
+          [[ "$identity" == "pro.jest.$name" ]] || {
+            echo "Refusing to remove non-Axial bundle: $bundle" >&2
+            exit 1
+          }
+        fi
+      done
+    SHELL
   end
 
   uninstall quit:    "pro.jest.Axial",
