@@ -102,32 +102,125 @@ the USB identity for device events. A button bit is set while that button is
 held. Axis values are signed HID-scale values; their interpretation as
 translation or rotation depends on the consumer and the active profile.
 
-## Minimal C++ example
+## Use it from Python
 
-The public headers provide transport helpers for native clients:
+In practice, a client opens the Unix socket, sends a `hello` record, then reads
+64-byte records until the service closes the connection. Python's standard
+library is sufficient; no Axial package is required. This complete example
+runs as a background monitor and prints useful information for every event:
 
-```cpp
-#include "axial/transport.hpp"
+```python
+import os
+import socket
+import struct
 
-int fd = sn::openEvents(sn::Flags::monitor);
-if (fd < 0) return 1;
+MAGIC = 0x534E4156
+VERSION = 1
+HELLO, MOTION, BUTTONS, ADDED, REMOVED, RESET, COMMAND = range(1, 8)
+MONITOR = 1
 
-sn::Event event;
-while (sn::readAll(fd, &event, sizeof event) && sn::valid(event)) {
-    // Handle event.kind, event.axes, event.buttons, and event.device.
-}
-close(fd);
+# < means little-endian. The format is exactly 64 bytes.
+EVENT = struct.Struct("<IHHQQII6hHHIIQ")
+
+
+def read_exact(connection, size):
+    data = bytearray()
+    while len(data) < size:
+        chunk = connection.recv(size - len(data))
+        if not chunk:
+            return None
+        data.extend(chunk)
+    return bytes(data)
+
+
+def socket_path():
+    return os.environ.get("AXIAL_SOCKET", f"/tmp/axial-{os.getuid()}/events")
+
+
+def connect_monitor():
+    connection = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    connection.connect(socket_path())
+    hello = EVENT.pack(
+        MAGIC, VERSION, HELLO,
+        0, 0, 0, 0,                 # received, sequence, device, buttons
+        0, 0, 0, 0, 0, 0,            # six axes
+        0, 0,                       # vendor, product
+        MONITOR, os.getpid(), 0,     # flags, pid, decoded
+    )
+    connection.sendall(hello)
+    return connection
+
+
+def unpack_event(record):
+    values = EVENT.unpack(record)
+    if values[0] != MAGIC or values[1] != VERSION:
+        raise RuntimeError("unsupported Axial event record")
+    return {
+        "kind": values[2], "received": values[3], "sequence": values[4],
+        "device": values[5], "buttons": values[6], "axes": values[7:13],
+        "vendor": values[13], "product": values[14], "flags": values[15],
+        "pid": values[16], "decoded": values[17],
+    }
+
+
+devices = {}
+with connect_monitor() as connection:
+    while record := read_exact(connection, EVENT.size):
+        event = unpack_event(record)
+        kind = event["kind"]
+        device = event["device"]
+
+        if kind == MOTION:
+            devices.setdefault(device, {})["axes"] = event["axes"]
+            print("motion", device, event["axes"])
+        elif kind == BUTTONS:
+            devices.setdefault(device, {})["buttons"] = event["buttons"]
+            print("buttons", device, hex(event["buttons"]))
+        elif kind == ADDED:
+            devices[device] = {
+                "vendor": event["vendor"], "product": event["product"],
+                "axes": event["axes"], "buttons": event["buttons"],
+            }
+            print("added", device, hex(event["vendor"]), hex(event["product"]))
+        elif kind == REMOVED:
+            devices.pop(device, None)
+            print("removed", device)
+        elif kind == RESET:
+            if device == 0:
+                devices.clear()
+            elif device in devices:
+                devices[device]["axes"] = (0, 0, 0, 0, 0, 0)
+                devices[device]["buttons"] = 0
+            print("reset", device)
+        elif kind == COMMAND:
+            print("command", device, hex(event["flags"]))
+        elif kind == HELLO:
+            raise RuntimeError("hello is sent by the client, not received")
+        else:
+            raise RuntimeError(f"unknown event kind: {kind}")
 ```
 
-`openEvents` connects to the socket, sends the hello record, and returns a
-blocking descriptor by default. `sn::readAll` is a convenience for reading one
-complete record. Nonblocking clients can pass `true` as the second argument to
-`openEvents` and handle partial reads with their own event loop.
+Save it as `monitor.py` and run `python3 monitor.py` while Axial is running.
+The first records are normally `added` events for devices that are already
+connected. The monitor continues receiving motion and button events while the
+monitoring process stays in the background and another app is active.
 
-For dispatch-based clients, `sn::Stream` accepts a queue and callback, reconnects
-after service startup or disconnection, and invokes the callback on that queue.
-On a stream disconnection it reports a `reset` event with the
-`disconnected` flag before retrying.
+The handler keeps the latest state in `devices`: `motion` replaces the six axis
+values, `buttons` replaces the button mask, `added` creates a device entry, and
+`removed` deletes one. `reset` clears transient state; a reset with `device ==
+0` applies to all devices. `command` is an application command and should be
+interpreted from `flags`; `hello` is sent during setup and is not expected in
+the receive loop.
+
+`recv()` can return a partial record because this is a stream socket, so the
+`read_exact` helper is required. When it returns `None`, the service has closed
+the connection. A long-running integration should close the socket, wait
+briefly, and call `connect_monitor()` again.
+
+To receive profile-filtered events for the foreground application, send a
+hello with `flags` set to `0` instead of `MONITOR`. Set `AXIAL_SOCKET` when the
+service uses a non-default path; otherwise the example derives the default
+path from `os.getuid()`.
 
 ## Related control socket
 
