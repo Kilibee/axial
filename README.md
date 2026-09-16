@@ -73,6 +73,23 @@ checks), `pkg` (installer), `stage` and `clean`.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the command table, direct CMake
 workflow, Intel and sanitizer builds, signing and packaging.
 
+## Supported APIs
+
+Axial exposes the compatibility APIs used by supported applications, plus local
+service APIs for tools and integrations:
+
+| API | Access | Purpose |
+| --- | --- | --- |
+| 3Dconnexion Client API | `/Library/Frameworks/3DconnexionClient.framework` | Compatibility with applications using the legacy 3Dconnexion client framework |
+| Navlib API | `/Library/Frameworks/3DconnexionNavlib.framework` | Compatibility with applications using the FreeCAD/3Dconnexion navigation library |
+| Event stream | Unix socket at `/tmp/axial-$UID/events` | Subscribe to device, motion and button events, including from a background monitor, or inject events in mock mode; see [the event stream API](docs/events.md) |
+| Control API | Unix socket at `/tmp/axial-$UID/events.control` | Query status and configuration, update configuration, publish command catalogs, request Accessibility permission, or stop the service |
+
+Here `$UID` means the numeric Unix user ID. In a shell, get it with `id -u` (or
+use `$UID` in shells that provide that variable). The socket directory and both
+socket names can be relocated together with the `AXIAL_SOCKET` environment
+variable. The socket APIs are local to the logged-in user.
+
 ## Install and use
 
 1. **Uninstall the 3Dconnexion driver**. When updating Axial, quit it and close CAD
@@ -137,6 +154,13 @@ Axial builds on the work and research of these open-source projects:
 | [ANTz](https://github.com/openantz/antz) | Enterprise HID report investigation |
 | [3dxdisp-pro](https://github.com/MiguelDLM/3dxdisp-pro) | SpacePilot Pro hardware and button research |
 | [Khronos glTF Sample Assets](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/ToyCar) | CC0 Toy Car model by Guido Odendahl, with materials and scene by Eric Chadwick |
+
+## Trademarks
+
+3Dconnexion, SpaceMouse, SpaceExplorer, SpacePilot, SpaceNavigator,
+SpaceTraveler, SpaceBall, and the other 3Dconnexion product names referenced in
+this README are trademarks or registered trademarks of 3Dconnexion. Axial is
+independent of and not endorsed by 3Dconnexion.
 
 ## License
 
