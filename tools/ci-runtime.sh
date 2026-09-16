@@ -13,7 +13,8 @@ service="$app/Contents/Library/Helpers/Axial Service.app/Contents/MacOS/axial-se
 client="$payload/Library/Frameworks/3DconnexionClient.framework"
 navlib="$payload/Library/Frameworks/3DconnexionNavlib.framework"
 for binary in "$app/Contents/MacOS/Axial" "$service" "$app/Contents/Library/Helpers/axialctl" "$client/Versions/A/3DconnexionClient" "$navlib/Versions/A/3DconnexionNavlib"; do
-  lipo -verify_arch arm64 x86_64 "$binary"
+  lipo "$binary" -verify_arch arm64
+  lipo "$binary" -verify_arch x86_64
   xcrun vtool -show-build "$binary"
   [[ $(xcrun vtool -show-build "$binary" | awk '/minos/ {print $2}' | sort -u) == 13.0 ]]
 done
