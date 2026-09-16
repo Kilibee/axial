@@ -7,12 +7,12 @@ cask "axial" do
   desc "Native SpaceMouse and SpaceExplorer driver"
   homepage "https://github.com/consi/axial"
 
-  depends_on macos: ">= :ventura"
+  depends_on macos: :ventura
 
   pkg "Axial-#{version}-universal.pkg"
 
   uninstall_preflight_steps do
-    run "/bin/bash", args: ["-c", <<~'SHELL']
+    run "/bin/bash", args: ["-c", <<~SHELL]
       set -euo pipefail
       for name in Axial 3DconnexionClient 3DconnexionNavlib; do
         if [[ "$name" == Axial ]]; then

@@ -67,7 +67,8 @@ if(AXIAL_BUILD_APP)
   set(CMAKE_Swift_COMPILATION_MODE wholemodule)
   include(cmake/Swift.cmake)
   add_library(axial-bridge STATIC app/bridge.cpp)
-  target_link_libraries(axial-bridge PRIVATE axial-options)
+  # Swift-linked Xcode targets do not infer the C++ runtime from a static archive.
+  target_link_libraries(axial-bridge PRIVATE axial-options PUBLIC c++)
   set(axial_app_sources
     app/Axial.swift app/AppLifecycle.swift app/AxisMeter.swift app/DeviceCatalog.swift
     app/Diagnostics.swift app/NativeControls.swift app/SceneTest.swift app/ServiceClient.swift

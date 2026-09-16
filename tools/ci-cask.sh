@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 [[ "${GITHUB_ACTIONS:-}" == true ]] || { echo 'Installation checks require a disposable GitHub runner.' >&2; exit 1; }
+brew update
 version=$(sed -n 's/project(Axial VERSION \([^ ]*\).*/\1/p' CMakeLists.txt)
 tap=$(mktemp -d)
 bash tools/generate-cask.sh "$version" release "$tap/Casks/axial.rb"
