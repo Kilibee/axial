@@ -7,6 +7,7 @@ import SwiftUI
     private(set) var settingsWindow: NSWindow?
     private(set) var statusItem: NSStatusItem?
     private var quitting = false
+    private var handleRelaunches = false
     private let makeModel: @MainActor () -> Model
     init(makeModel: @escaping @MainActor () -> Model = {Model()}) {
         self.makeModel = makeModel;super.init()
@@ -23,6 +24,11 @@ import SwiftUI
         item.button?.setAccessibilityLabel("Axial")
         item.menu = makeStatusMenu();statusItem = item
         model = makeModel()
+        Task {@MainActor [weak self] in
+            try? await Task.sleep(for: .milliseconds(100))
+            await Task.yield()
+            self?.handleRelaunches = true
+        }
     }
 
     @objc func openSettings(_ sender: Any?) {
@@ -61,9 +67,9 @@ import SwiftUI
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        // LaunchServices can send reopen during the initial launch too.
-        // Settings opens explicitly from the menu, never from a launch event.
-        return false
+        guard handleRelaunches, !flag else {return false}
+        openSettings(nil)
+        return true
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {false}
@@ -88,11 +94,6 @@ import SwiftUI
         let settings = appMenu.addItem(withTitle: "Open Settings…", action: #selector(openSettings(_:)), keyEquivalent: ",")
         settings.target = self
         appMenu.addItem(.separator())
-        appMenu.addItem(withTitle: "Hide Axial", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
-        let hideOthers = appMenu.addItem(withTitle: "Hide Others", action: #selector(NSApplication.hideOtherApplications(_:)), keyEquivalent: "h")
-        hideOthers.keyEquivalentModifierMask = [.command, .option]
-        appMenu.addItem(withTitle: "Show All", action: #selector(NSApplication.unhideAllApplications(_:)), keyEquivalent: "")
-        appMenu.addItem(.separator())
         appMenu.addItem(withTitle: "Quit Axial", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         let editMenu = NSMenu(title: "Edit")
         menu.addItem(withTitle: "Edit", action: nil, keyEquivalent: "").submenu = editMenu
@@ -102,7 +103,6 @@ import SwiftUI
         let windowMenu = NSMenu(title: "Window")
         menu.addItem(withTitle: "Window", action: nil, keyEquivalent: "").submenu = windowMenu
         windowMenu.addItem(withTitle: "Minimize", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
-        windowMenu.addItem(withTitle: "Zoom", action: #selector(NSWindow.performZoom(_:)), keyEquivalent: "")
         windowMenu.addItem(withTitle: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
         NSApp.mainMenu = menu
         NSApp.windowsMenu = windowMenu
