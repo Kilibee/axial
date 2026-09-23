@@ -23,8 +23,33 @@ if brew install --cask consi/axial-ci/axial; then exit 1; fi
 [[ $(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$foreign/Resources/Info.plist") == com.example.foreign ]]
 sudo rm "$foreign/Resources/Info.plist"
 sudo rmdir "$foreign/Resources" "$foreign"
+# Register an older development copy before installation. A relocatable package
+# can silently update this copy instead of creating /Applications/Axial.app.
+mkdir -p build
+duplicate=$(mktemp -d "$PWD/build/installer-duplicate.XXXXXX")
+pkgutil --expand-full "release/Axial-$version-universal.pkg" "$duplicate/package"
+payload_app=$(find "$duplicate/package" -type d -path '*/Applications/Axial.app')
+[[ -n "$payload_app" && "$payload_app" != *$'\n'* ]]
+duplicate_app="$duplicate/Developer build/Axial.app"
+ditto "$payload_app" "$duplicate_app"
+/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion 0.0.0' "$duplicate_app/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 0.0.0' "$duplicate_app/Contents/Info.plist"
+touch "$duplicate_app/Contents/axial-ci-preserve"
+codesign --force --sign - "$duplicate_app"
+lsregister=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+trap '"$lsregister" -u "$duplicate_app" >/dev/null 2>&1 || true' EXIT
+"$lsregister" -f "$duplicate_app"
+check_install_location() {
+  codesign --verify --deep --strict /Applications/Axial.app
+  [[ $(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' /Applications/Axial.app/Contents/Info.plist) == "$version" ]]
+  [[ -e "$duplicate_app/Contents/axial-ci-preserve" ]]
+  [[ $(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$duplicate_app/Contents/Info.plist") == 0.0.0 ]]
+  codesign --verify --deep --strict "$duplicate_app"
+}
 brew install --cask consi/axial-ci/axial
-codesign --verify --deep --strict /Applications/Axial.app
+check_install_location
+brew reinstall --cask consi/axial-ci/axial
+check_install_location
 web_credentials='/Library/Application Support/Axial/Web'
 [[ -x /Applications/Axial.app/Contents/Library/Helpers/axial-web-setup ]]
 # Package installation must not need a GUI session, create a CA, alter trust,

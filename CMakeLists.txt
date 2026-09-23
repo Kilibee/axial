@@ -3,7 +3,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "Use an out-of-source build, for example: cmake --preset native")
 endif()
 set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" CACHE STRING "Minimum supported macOS")
-set(AXIAL_VERSION "0.2.0" CACHE STRING "Product version; release CI supplies the tag version")
+set(AXIAL_VERSION "0.2.1" CACHE STRING "Product version; release CI supplies the tag version")
 if(NOT AXIAL_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
   message(FATAL_ERROR "AXIAL_VERSION must be MAJOR.MINOR.PATCH")
 endif()
@@ -141,6 +141,9 @@ if(AXIAL_BUILD_APP AND NOT AXIAL_SANITIZERS)
   set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "Axial")
   set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "SpaceMouse service, settings app and compatibility frameworks")
   set(CPACK_COMPONENT_RUNTIME_REQUIRED TRUE)
+  # pkgbuild's per-bundle relocation policy is independent of CPack's package
+  # install prefix. Never update an app/framework found in a development tree.
+  set(CPACK_COMPONENT_RUNTIME_PLIST "${CMAKE_SOURCE_DIR}/cmake/InstallerComponents.plist")
   set(CPACK_PREFLIGHT_RUNTIME_SCRIPT "${CMAKE_SOURCE_DIR}/tools/package-preinstall.sh")
   # productbuild requires a supported extension for displayed installer resources.
   configure_file(LICENSE "${CMAKE_BINARY_DIR}/generated/License.txt" COPYONLY)

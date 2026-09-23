@@ -1,18 +1,10 @@
-## New JavaScript / WebSocket API
-
-- Adds a local, TLS-secured WebSocket API compatible with 3DconnexionJS/WAMP v1 for browser-based 3D navigation, including camera updates, focus, fit, and mapped commands.
-- Web navigation is enabled by default. Set up certificates and the loopback address from Axial's **WebSocket API compatibility** section with macOS approval; no shell scripts, host allowlists, or separately installed OpenSSL are needed.
-- Axial checks web setup health and offers repair or certificate renewal when needed. Quitting Axial closes its WebSocket listener.
-- Connected-client diagnostics now include WebSocket connections. The web compatibility section shows **Ready** when setup and the listener are healthy.
-
 ## Fixes
 
-- Resolves controller references consistently across prefixed URIs, full URIs, and bare IDs, fixing rejected focus requests from 3DconnexionJS clients.
-- Improves native client compatibility with helper-process applications and legacy button handling while preserving framework ABI versions.
-- Reopening Axial brings the existing settings window forward instead of starting another instance.
-- Restores the settings window after macOS setup approval and handles certificates already present in the keychain.
-- Fixes a shutdown race that could leave the web service running.
-- Uses the release tag as the authoritative package version, fixing the version mismatch that blocked v0.1.1 releases.
+- Fixes macOS Installer redirecting Axial into an existing development copy instead of `/Applications/Axial.app`. App and framework installation locations are now fixed explicitly.
+- Adds package metadata checks and Homebrew install/reinstall regression tests with a registered duplicate app, ensuring the development copy remains untouched.
+- Makes the Homebrew release update resilient to GitHub temporarily omitting uploaded files from its release-by-tag API: it downloads the published asset URLs and verifies checksums directly.
+
+Includes the JavaScript/WebSocket API compatibility and native-client fixes introduced in v0.2.0.
 
 ## Installation
 

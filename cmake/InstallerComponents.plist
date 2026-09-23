@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+  <dict>
+    <key>RootRelativeBundlePath</key><string>Applications/Axial.app</string>
+    <key>BundleIsRelocatable</key><false/>
+    <key>BundleHasStrictIdentifier</key><true/>
+    <key>BundleIsVersionChecked</key><true/>
+    <key>BundleOverwriteAction</key><string>upgrade</string>
+    <key>ChildBundles</key>
+    <array>
+      <dict>
+        <key>RootRelativeBundlePath</key><string>Applications/Axial.app/Contents/Library/Helpers/Axial Service.app</string>
+        <key>BundleIsRelocatable</key><false/>
+        <key>BundleHasStrictIdentifier</key><true/>
+        <key>BundleOverwriteAction</key><string></string>
+      </dict>
+    </array>
+  </dict>
+  <dict>
+    <key>RootRelativeBundlePath</key><string>Library/Frameworks/3DconnexionClient.framework</string>
+    <key>BundleIsRelocatable</key><false/>
+    <key>BundleHasStrictIdentifier</key><true/>
+    <key>BundleIsVersionChecked</key><true/>
+    <key>BundleOverwriteAction</key><string>upgrade</string>
+  </dict>
+  <dict>
+    <key>RootRelativeBundlePath</key><string>Library/Frameworks/3DconnexionNavlib.framework</string>
+    <key>BundleIsRelocatable</key><false/>
+    <key>BundleHasStrictIdentifier</key><true/>
+    <key>BundleIsVersionChecked</key><true/>
+    <key>BundleOverwriteAction</key><string>upgrade</string>
+  </dict>
+</array>
+</plist>

@@ -69,7 +69,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ needs.version.outputs.version }}
         run: |
-          gh release download "v$VERSION" --repo consi/axial --dir release --pattern '*.pkg' --pattern SHA256SUMS
+          # GitHub's release-by-tag API can temporarily omit uploaded assets.
+          # Fetch the exact published URLs and verify bytes before updating the tap.
+          for asset in "Axial-$VERSION-universal.pkg" SHA256SUMS; do
+            curl --fail --location --retry 5 --retry-all-errors --connect-timeout 15 --max-time 120 \
+              --output "release/$asset" "https://github.com/consi/axial/releases/download/v$VERSION/$asset"
+          done
+          (cd release && shasum -a 256 -c SHA256SUMS)
           bash tools/generate-cask.sh "$VERSION" release tap/Casks/axial.rb
           ruby -c tap/Casks/axial.rb
           brew update

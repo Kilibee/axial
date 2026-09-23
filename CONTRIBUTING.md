@@ -130,6 +130,10 @@ and Homebrew checks. Local builds use CMake's default or `-DAXIAL_VERSION=x.y.z`
 Framework compatibility versions remain independent. Releases reject malformed
 tags and commits outside `main`. The release job publishes the
 verified package and SHA256SUMS, then a separate job updates `consi/homebrew`.
+The installer component plist pins every bundle to its intended location;
+package verification rejects relocation metadata. Homebrew CI registers an older
+development copy and checks that install/reinstall leaves it untouched while
+placing the released app in `/Applications`.
 Release automation uses Bash and runner-provided jq; Python is not required.
 
 `HOMEBREW_DEPLOY_KEY` must contain the private half of a writable deploy key scoped
