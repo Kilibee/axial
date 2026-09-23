@@ -34,7 +34,7 @@ duplicate_app="$duplicate/Developer build/Axial.app"
 ditto "$payload_app" "$duplicate_app"
 /usr/libexec/PlistBuddy -c 'Set :CFBundleVersion 0.0.0' "$duplicate_app/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 0.0.0' "$duplicate_app/Contents/Info.plist"
-touch "$duplicate_app/Contents/axial-ci-preserve"
+touch "$duplicate_app/Contents/Resources/axial-ci-preserve"
 codesign --force --sign - "$duplicate_app"
 lsregister=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
 trap '"$lsregister" -u "$duplicate_app" >/dev/null 2>&1 || true' EXIT
@@ -42,7 +42,7 @@ trap '"$lsregister" -u "$duplicate_app" >/dev/null 2>&1 || true' EXIT
 check_install_location() {
   codesign --verify --deep --strict /Applications/Axial.app
   [[ $(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' /Applications/Axial.app/Contents/Info.plist) == "$version" ]]
-  [[ -e "$duplicate_app/Contents/axial-ci-preserve" ]]
+  [[ -e "$duplicate_app/Contents/Resources/axial-ci-preserve" ]]
   [[ $(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$duplicate_app/Contents/Info.plist") == 0.0.0 ]]
   codesign --verify --deep --strict "$duplicate_app"
 }
