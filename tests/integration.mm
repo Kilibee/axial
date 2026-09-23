@@ -18,6 +18,8 @@ extern "C" uint64_t AxialPreviewLostLogs();
 namespace {
 std::atomic<int> addedCount=0,motionCount=0,buttonCount=0,removedCount=0;
 std::atomic<int> lastX=0,lastY=0,lastButtons=0;
+std::atomic<int> appPressed=0,appReleased=0;
+void appMessage(uint32_t,uint32_t type,void* data){auto s=static_cast<ConnexionDeviceState*>(data);CHECK(type==0x33645352);if(s->command==11){CHECK(s->value==2);if(s->appEventPressed)++appPressed;else ++appReleased;}}
 std::atomic<uint16_t> client=0;
 void (*cleanupDuringMessage)()=nullptr;
 std::atomic<int> reentrantCleanups=0;
@@ -99,6 +101,8 @@ int main(int argc,char** argv){try {@autoreleasepool {
     CHECK(sn::request(config).find("\"ok\":true")!=std::string::npos);
     CHECK(sn::request(R"({"op":"setConfig","config":{"version":1,"profiles":{"*":{"led":false}}}})").find("\"ok\":true")!=std::string::npos);
     CHECK(sn::request("{\"op\":\"getConfig\"}").find("\"led\":false")!=std::string::npos);
+    CHECK(sn::request(R"({"op":"setConfig","config":{"version":1,"profiles":{},"web":{"enabled":"true"}}})").find("error")!=std::string::npos);
+    CHECK(sn::request(R"({"op":"setConfig","config":{"version":1,"profiles":{},"web":{"enabled":false}}})").find("\"ok\":true")!=std::string::npos);
     CHECK(sn::request(R"({"op":"setConfig","config":{"version":1,"profiles":{"*":{"led":1}}}})").find("error")!=std::string::npos);
     CHECK(sn::request(config).find("\"ok\":true")!=std::string::npos);
     e.kind=sn::Kind::motion;e.received=sn::now();CHECK(sn::writeAll(inject,&e,sizeof(e)));CHECK(waitFor([]{return lastX==700;}));
@@ -126,6 +130,14 @@ int main(int argc,char** argv){try {@autoreleasepool {
     unregister(survivor);cleanup();
     CHECK(waitFor([]{return sn::request("{\"op\":\"status\"}").find("\"clients\":1")!=std::string::npos;}));
     // Same ABI using a worker callback thread, as Blender does.
+    CHECK(install(appMessage,added,removed,false)==0);client=reg(0x626c6e64,reinterpret_cast<const uint8_t*>("\007blender"),1,0x3f00);mask(client,0);
+    CHECK(waitFor([]{return sn::request("{\"op\":\"status\"}").find("\"clients\":2")!=std::string::npos;}));
+    e.kind=sn::Kind::added;e.buttons=0;CHECK(sn::writeAll(inject,&e,sizeof(e)));
+    e.kind=sn::Kind::buttons;e.buttons=1u<<10;CHECK(sn::writeAll(inject,&e,sizeof(e)));CHECK(waitFor([]{return appPressed==1;}));
+    auto globalReset=e;globalReset.kind=sn::Kind::reset;globalReset.device=0;globalReset.buttons=0;
+    CHECK(sn::writeAll(inject,&globalReset,sizeof(globalReset)));CHECK(waitFor([]{return appReleased==1;}));
+    e.kind=sn::Kind::removed;e.buttons=0;CHECK(sn::writeAll(inject,&e,sizeof(e)));cleanup();
+    CHECK(waitFor([]{return sn::request("{\"op\":\"status\"}").find("\"clients\":1")!=std::string::npos;}));
     CHECK(install(message,added,removed,true)==0);client=reg(0,nullptr,1,0x3f00);CHECK(client);
     e.kind=sn::Kind::motion;e.axes[0]=11;std::this_thread::sleep_for(std::chrono::milliseconds(30));CHECK(sn::writeAll(inject,&e,sizeof(e)));CHECK(waitFor([]{return lastX==22;}));cleanup();
     CHECK(waitFor([]{return sn::request("{\"op\":\"status\"}").find("\"clients\":1")!=std::string::npos;}));

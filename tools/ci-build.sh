@@ -10,16 +10,22 @@ sw_vers
 uname -m
 xcodebuild -version
 xcrun --sdk macosx --show-sdk-version
-cmake --preset xcode -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0
+version_args=(-DCMAKE_OSX_DEPLOYMENT_TARGET=13.0)
+if [[ -n "${AXIAL_RELEASE_VERSION:-}" ]]; then
+  version_args+=("-DAXIAL_VERSION=$AXIAL_RELEASE_VERSION")
+fi
+cmake --preset xcode "${version_args[@]}"
 cmake --build --preset xcode
 ctest --preset xcode -LE gui
 cpack --preset xcode
 mkdir -p build/release/tests build/release/fixtures
+sed -n 's/^AXIAL_VERSION:STRING=//p' build/xcode/CMakeCache.txt > build/release/VERSION
 cp build/xcode/packages/Axial-*-universal.pkg build/release/
 cp build/xcode/bin/Release/*-tests build/release/tests/
 cp tests/fixtures/spaceexplorer-motion.txt tests/fixtures/upstream-device-buttons.toml build/release/fixtures/
 cp tools/ci-runtime.sh build/release/
-tar -czf build/release-tests.tar.gz -C build/release tests fixtures ci-runtime.sh
+cp tests/web_tests.sh build/release/
+tar -czf build/release-tests.tar.gz -C build/release tests fixtures ci-runtime.sh web_tests.sh
 cp build/release-tests.tar.gz build/release/
 cd build/release
 shasum -a 256 Axial-*-universal.pkg > SHA256SUMS

@@ -1,6 +1,11 @@
 name: Build and validate
 on:
   workflow_call:
+    inputs:
+      version:
+        type: string
+        required: false
+        default: ''
 permissions:
   contents: read
 jobs:
@@ -28,6 +33,7 @@ jobs:
         run: bash tools/ci-build.sh "$XCODE_MAJOR"
         env:
           XCODE_MAJOR: ${{ matrix.xcode }}
+          AXIAL_RELEASE_VERSION: ${{ inputs.version }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: build-${{ matrix.runner }}

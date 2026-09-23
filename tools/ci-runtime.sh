@@ -12,7 +12,7 @@ payload="${app%/Applications/Axial.app}"
 service="$app/Contents/Library/Helpers/Axial Service.app/Contents/MacOS/axial-service"
 client="$payload/Library/Frameworks/3DconnexionClient.framework"
 navlib="$payload/Library/Frameworks/3DconnexionNavlib.framework"
-for binary in "$app/Contents/MacOS/Axial" "$service" "$app/Contents/Library/Helpers/axialctl" "$client/Versions/A/3DconnexionClient" "$navlib/Versions/A/3DconnexionNavlib"; do
+for binary in "$app/Contents/MacOS/Axial" "$service" "$app/Contents/Library/Helpers/axialctl" "$app/Contents/Library/Helpers/axial-web-setup" "$client/Versions/A/3DconnexionClient" "$navlib/Versions/A/3DconnexionNavlib"; do
   lipo "$binary" -verify_arch arm64
   lipo "$binary" -verify_arch x86_64
   xcrun vtool -show-build "$binary"
@@ -22,11 +22,20 @@ for bundle in "$app" "$client" "$navlib"; do
   codesign --verify --deep --strict "$bundle"
 done
 [[ $(/usr/libexec/PlistBuddy -c 'Print :LSMinimumSystemVersion' "$app/Contents/Info.plist") == 13.0 ]]
+[[ $(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist") == "$(<VERSION)" ]]
+[[ $(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Contents/Info.plist") == "$(<VERSION)" ]]
+for binary in "$service" "$app/Contents/Library/Helpers/axial-web-setup"; do
+  if otool -L "$binary" | sed -n '/^[[:space:]]/p' | grep -E '/(opt/homebrew|usr/local|Users)/'; then
+    echo 'Release depends on non-system runtime libraries' >&2; exit 1
+  fi
+done
 ./tests/core-tests fixtures/spaceexplorer-motion.txt fixtures/upstream-device-buttons.toml
 ./tests/transport-tests
+./tests/application-tests
+bash web_tests.sh "$app/Contents/Library/Helpers/axial-web-setup" ./tests/web-tests
 ./tests/owner-tests "$service"
 ./tests/integration-tests "$service" "$client/Versions/A/3DconnexionClient" "$navlib/Versions/A/3DconnexionNavlib"
-for test in navigation diagnostics session-log model; do "./tests/$test-tests"; done
+for test in navigation diagnostics session-log web-setup app-instance model; do "./tests/$test-tests"; done
 while IFS= read -r info; do
   /usr/bin/xmllint --xpath 'string(/pkg-info/@identifier)' "$info"
   printf '\n'

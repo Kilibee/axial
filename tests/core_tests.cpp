@@ -64,6 +64,8 @@ int main(int argc,char** argv){
     CHECK(std::abs(sn::length(camera.position)-10)<1e-8);CHECK(std::abs(sn::length(camera.right)-1)<1e-8);CHECK(std::abs(sn::dot(camera.right,camera.up))<1e-8);
     camera=original;sn::navigate(camera,{},axes,0.01,10,true,false,true);CHECK(camera.position.z==10&&camera.right.x==1);
     axes={0,350,0,0,0,0};sn::navigate(camera,{},axes,0.01,10,true,true,false);CHECK(camera.position.z==10);
+    sn::NavigationView view{original,{},false,true,true,true,{-2,-1,-10,2,1,10}};
+    view.advance(axes,.01,2);CHECK(view.camera.position.z==10);CHECK(view.extents[4]>1);CHECK(std::abs(view.extents[3]/view.extents[4]-2)<1e-12);
     sn::Event corrupt;corrupt.version=2;CHECK(!sn::valid(corrupt));
     trackAllocations=true;uint64_t checksum=0;
     for(int i=0;i<100000;++i){d.decode(combined,i,e);auto output=sn::filter(e,settings);checksum+=uint16_t(output.axes[2]);}

@@ -3,7 +3,7 @@ import AppKit
 @main enum AppStartupTests {
     @MainActor static func main() {
         let app = NSApplication.shared
-        let delegate = AxialAppDelegate(makeModel: {Model(live: false)})
+        let delegate = AxialAppDelegate(singleInstance: false, makeModel: {Model(live: false)})
         delegate.applicationDidFinishLaunching(Notification(name: NSApplication.didFinishLaunchingNotification))
         precondition(app.activationPolicy() == .accessory, "Axial must not create a Dock icon")
         precondition(delegate.settingsWindow == nil, "Every startup must leave settings hidden")
@@ -24,6 +24,8 @@ import AppKit
         precondition(delegate.settingsWindow?.isVisible == false && delegate.settingsWindow?.isMiniaturized == false,
                      "Minimize must hide settings without making a Dock tile")
         delegate.openSettings(nil);precondition(delegate.settingsWindow?.isVisible == true)
+        RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        precondition(delegate.applicationShouldHandleReopen(app, hasVisibleWindows: true), "Relaunch must also bring an existing visible window forward")
         delegate.settingsWindow?.close()
         precondition(delegate.settingsWindow?.isVisible == false && delegate.statusItem?.isVisible == true)
         print("PASS: menu-bar icon/menu, no Dock icon, hidden startup, reopen, close and minimize-to-menu-bar")

@@ -3,6 +3,8 @@
 #import <ApplicationServices/ApplicationServices.h>
 #include "axial/transport.hpp"
 #include "axial/keys.hpp"
+#include "axial/application.hpp"
+#include "axial/web.hpp"
 #include <atomic>
 #include <cstdio>
 #include <memory>
@@ -25,10 +27,13 @@ struct Profile {
     std::array<Action,32> actions{};
     Profile(){keys.fill(-1);}
 };
-struct Configuration { std::map<std::string,Profile> profiles; };
+struct Configuration { std::map<std::string,Profile> profiles;WebConfiguration web; };
+std::unique_ptr<WebServer> webServer;
 struct Peer {
     int fd=-1;
     pid_t pid=0;
+    sn::ProcessIdentity identity;
+    bool foreground=false;
     bool registered=false, observe=false, injecting=false, writeActive=false;
     Event incoming{};
     size_t readOffset=0,writeOffset=0;
@@ -72,6 +77,10 @@ std::unique_ptr<Configuration> configuration;
 Profile activeProfile;
 std::string foregroundBundle;
 pid_t foregroundPID=0;
+sn::ProcessIdentity foregroundIdentity;
+void resolveForeground(Peer& peer) {
+    peer.foreground=sn::belongsToApplication(peer.identity,foregroundIdentity,sn::processIdentity);
+}
 bool mockMode=false;
 uint64_t reports=0,overflows=0,rejected=0;
 dispatch_queue_t keyQueue;
@@ -175,15 +184,17 @@ void route(const Event& raw) {
             case Action::faster:for(auto& gain:selected->motion.gain)gain=std::min(20.f,gain*1.25f);break;
             case Action::slower:for(auto& gain:selected->motion.gain)gain=std::max(.01f,gain/1.25f);break;
             case Action::fit:{Event command=raw;command.kind=Kind::command;command.flags=0x10000;
-                for(auto& p:peers)if(p.fd>=0&&p.registered&&!p.injecting&&!p.observe&&(mockMode||p.pid==foregroundPID))enqueue(p,command);break;}
+                if(webServer)webServer->receive(command);
+                for(auto& p:peers)if(p.fd>=0&&p.registered&&!p.injecting&&!p.observe&&(mockMode||p.foreground))enqueue(p,command);break;}
             default:break;
         }
     }
     Event e=filter(raw,selected->motion);
     e.buttons&=~suppressed;
+    if(webServer)webServer->receive(e);
     for(auto& p:peers) if(p.fd>=0&&p.registered&&!p.injecting) {
         if(p.observe) enqueue(p,raw);
-        else if(mockMode||p.pid==foregroundPID||raw.kind==Kind::added||raw.kind==Kind::removed||raw.kind==Kind::reset)
+        else if(mockMode||p.foreground||raw.kind==Kind::added||raw.kind==Kind::removed||raw.kind==Kind::reset)
             enqueue(p,e);
     }
     if(raw.kind==Kind::buttons&&!mockMode) {
@@ -297,6 +308,7 @@ void acceptEvents(int listenerFD) {
         p=Peer{};p.fd=fd;
         socklen_t size=sizeof(p.pid);
         if(getsockopt(fd,SOL_LOCAL,LOCAL_PEERPID,&p.pid,&size)){close(fd);p.fd=-1;return;}
+        p.identity=sn::processIdentity(p.pid);resolveForeground(p);
         fcntl(fd,F_SETFL,O_NONBLOCK);
         int buffer=4096;setsockopt(fd,SOL_SOCKET,SO_SNDBUF,&buffer,sizeof(buffer));
         Peer* ptr=&p;
@@ -317,6 +329,14 @@ std::unique_ptr<Configuration> parseConfig(NSDictionary* d) {
     if(![d isKindOfClass:NSDictionary.class]||!number(d[@"version"])||![d[@"version"] isEqual:@1]||![d[@"profiles"] isKindOfClass:NSDictionary.class])return nullptr;
     NSDictionary* profiles=d[@"profiles"];if(profiles.count>128)return nullptr;
     auto c=std::make_unique<Configuration>();
+    c->web.enabled=!mockMode;
+    NSString* webDirectory=mockMode?[settingsPath.stringByDeletingLastPathComponent stringByAppendingPathComponent:@"web"]:@"/Library/Application Support/Axial/Web";
+    c->web.certificate=[[webDirectory stringByAppendingPathComponent:@"server.crt"] UTF8String];
+    c->web.key=[[webDirectory stringByAppendingPathComponent:@"server.key"] UTF8String];
+    if(id web=d[@"web"]){
+        if(![web isKindOfClass:NSDictionary.class]||(web[@"enabled"]&&!boolean(web[@"enabled"])))return nullptr;
+        if(web[@"enabled"])c->web.enabled=[web[@"enabled"] boolValue];
+    }
     for(NSString* key in profiles){
         if(![key isKindOfClass:NSString.class]||key.length==0||key.length>255)return nullptr;
         NSDictionary* v=profiles[key];if(![v isKindOfClass:NSDictionary.class])return nullptr;
@@ -353,6 +373,9 @@ std::unique_ptr<Configuration> parseConfig(NSDictionary* d) {
                 }
             }
         }
+        std::array<std::string,32> commands{};
+        if(buttons)for(NSUInteger i=0;i<buttons.count;++i){NSString* command=buttons[i][@"command"];if(command)commands[i]=command.UTF8String;}
+        c->web.commands.emplace(key.UTF8String,std::move(commands));
         c->profiles.emplace(key.UTF8String,p);
     }
     return c;
@@ -376,11 +399,14 @@ NSDictionary* status() {
     task_info(mach_task_self(),MACH_TASK_BASIC_INFO,reinterpret_cast<task_info_t>(&memory),&count);
     rusage usage{};getrusage(RUSAGE_SELF,&usage);
     double cpu=usage.ru_utime.tv_sec+usage.ru_stime.tv_sec+(usage.ru_utime.tv_usec+usage.ru_stime.tv_usec)/1e6;
-    return @{@"version":@1,@"mock":@(mockMode),@"devices":items,@"clients":@(snapshot.clients),@"reports":@(snapshot.reports),@"overflows":@(snapshot.overflows),@"rejected":@(snapshot.rejected),@"foregroundPID":@(snapshot.foreground),@"foregroundApp":bundle?:@"",@"accessibility":@(bool(AXIsProcessTrusted())),@"residentBytes":@(memory.resident_size),@"cpuSeconds":@(cpu)};
+    auto webText=webServer->status();NSData* webData=[NSData dataWithBytes:webText.data() length:webText.size()];
+    id web=[NSJSONSerialization JSONObjectWithData:webData options:0 error:nil];
+    return @{@"version":@1,@"mock":@(mockMode),@"devices":items,@"clients":@(snapshot.clients),@"reports":@(snapshot.reports),@"overflows":@(snapshot.overflows),@"rejected":@(snapshot.rejected),@"foregroundPID":@(snapshot.foreground),@"foregroundApp":bundle?:@"",@"accessibility":@(bool(AXIsProcessTrusted())),@"residentBytes":@(memory.resident_size),@"cpuSeconds":@(cpu),@"web":web?:@{}};
 }
 NSDictionary* handle(NSDictionary* request) {
     NSString* op=request[@"op"];
     if([op isEqual:@"status"])return status();
+    if([op isEqual:@"retryWeb"]){webServer->retry();return @{@"ok":@YES};}
     if([op isEqual:@"requestAccessibility"]){
         bool trusted=AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)@{(__bridge NSString*)kAXTrustedCheckOptionPrompt:@YES});
         return @{@"trusted":@(trusted)};
@@ -406,6 +432,7 @@ NSDictionary* handle(NSDictionary* request) {
         if(!c)return @{@"error":@"Invalid version 1 configuration"};
         NSError* error=nil;NSData* data=[NSJSONSerialization dataWithJSONObject:d options:NSJSONWritingPrettyPrinted error:&error];
         if(!data||![data writeToFile:settingsPath options:NSDataWritingAtomic error:&error])return @{@"error":error.localizedDescription?:@"Could not save settings"};
+        webServer->configure(c->web);
         document=[d copy];Configuration* ptr=c.release();
         // Configuration changes execute between reports, never while decoding one.
         dispatch_sync(inputQueue,^{resetFocus();configuration.reset(ptr);selectProfile();});
@@ -476,13 +503,15 @@ int main(int argc,char** argv) {@autoreleasepool {
     document=existing?[NSJSONSerialization JSONObjectWithData:existing options:0 error:nil]:nil;
     configuration=parseConfig(document);
     if(!configuration){document=@{@"version":@1,@"profiles":@{@"*":@{}}};configuration=parseConfig(document);}
+    webServer=std::make_unique<WebServer>();webServer->configure(configuration->web);
     commandCatalog=[NSMutableDictionary dictionary];selectProfile();
     dispatch_source_t source=dispatch_source_create(DISPATCH_SOURCE_TYPE_READ,events,0,inputQueue);
     dispatch_source_set_event_handler(source,^{acceptEvents(events);});dispatch_resume(source);
     std::thread(controlLoop,controls).detach();
     auto updateFocus=^{NSRunningApplication* app=NSWorkspace.sharedWorkspace.frontmostApplication;
         pid_t pid=app.processIdentifier;NSString* bundle=app.bundleIdentifier?:@"";
-        dispatch_async(inputQueue,^{if(foregroundPID!=pid){resetFocus();foregroundPID=pid;foregroundBundle=bundle.UTF8String;selectProfile();}});
+        auto identity=sn::processIdentity(pid);
+        dispatch_async(inputQueue,^{if(foregroundPID!=pid||foregroundIdentity.birth!=identity.birth){resetFocus();foregroundPID=pid;foregroundIdentity=identity;foregroundBundle=bundle.UTF8String;for(auto& p:peers)if(p.fd>=0)resolveForeground(p);selectProfile();}});
     };
     id observer=[NSWorkspace.sharedWorkspace.notificationCenter addObserverForName:NSWorkspaceDidActivateApplicationNotification object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification*){updateFocus();}];
     updateFocus();

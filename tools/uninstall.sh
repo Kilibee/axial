@@ -13,6 +13,9 @@ if [[ -e /Applications/Axial.app ]]; then
   [[ "$identity" == pro.jest.Axial ]] || exit 1
 fi
 echo 'Disable Start at login and quit Axial before uninstalling.'
+if [[ -x /Applications/Axial.app/Contents/Library/Helpers/axial-web-setup ]]; then
+  /Applications/Axial.app/Contents/Library/Helpers/axial-web-setup --uninstall
+fi
 for name in 3DconnexionClient 3DconnexionNavlib; do rm -rf "/Library/Frameworks/$name.framework"; done
 rm -rf /Applications/Axial.app
 echo 'Axial removed; settings retained. You can reinstall the vendor driver.'

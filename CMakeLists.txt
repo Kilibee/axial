@@ -3,7 +3,11 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "Use an out-of-source build, for example: cmake --preset native")
 endif()
 set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" CACHE STRING "Minimum supported macOS")
-project(Axial VERSION 0.1.0 LANGUAGES CXX OBJCXX)
+set(AXIAL_VERSION "0.2.0" CACHE STRING "Product version; release CI supplies the tag version")
+if(NOT AXIAL_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
+  message(FATAL_ERROR "AXIAL_VERSION must be MAJOR.MINOR.PATCH")
+endif()
+project(Axial VERSION ${AXIAL_VERSION} LANGUAGES C CXX OBJCXX)
 if(NOT CMAKE_OSX_ARCHITECTURES)
   set(CMAKE_OSX_ARCHITECTURES "${CMAKE_HOST_SYSTEM_PROCESSOR}" CACHE STRING "Target CPU architectures" FORCE)
 endif()
@@ -35,7 +39,15 @@ if(AXIAL_SANITIZERS)
   target_link_options(axial-options INTERFACE -fsanitize=address,undefined)
 endif()
 
+include(cmake/WebDependencies.cmake)
+add_library(axial-web STATIC src/web.mm)
+target_link_libraries(axial-web PUBLIC axial-options axial-web-dependencies "-framework Foundation")
+add_executable(axial-web-setup src/web_setup.mm)
+target_link_libraries(axial-web-setup PRIVATE axial-options axial-web-dependencies "-framework Foundation" "-framework Security")
+add_custom_command(TARGET axial-web-setup POST_BUILD
+  COMMAND /usr/bin/codesign --force --options runtime --sign "${AXIAL_SIGN_IDENTITY}" $<TARGET_FILE:axial-web-setup> VERBATIM)
 add_executable(axial-service src/service.mm)
+target_link_libraries(axial-service PRIVATE axial-web)
 target_link_libraries(axial-service PRIVATE axial-options "-framework AppKit" "-framework IOKit" "-framework ApplicationServices")
 add_executable(axialctl src/ctl.cpp)
 target_link_libraries(axialctl PRIVATE axial-options)
@@ -52,6 +64,7 @@ foreach(adapter IN ITEMS Client Navlib)
   target_link_libraries(${target} PRIVATE axial-options ${adapter_frameworks})
   set_target_properties(${target} PROPERTIES FRAMEWORK TRUE FRAMEWORK_VERSION A
     MACOSX_FRAMEWORK_IDENTIFIER "pro.jest.${target}" VERSION 1.0.0 SOVERSION 1.0.0
+    MACOSX_FRAMEWORK_BUNDLE_VERSION "1.0.0" MACOSX_FRAMEWORK_SHORT_VERSION_STRING "1.0.0"
     INSTALL_NAME_DIR /Library/Frameworks BUILD_WITH_INSTALL_NAME_DIR TRUE XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED NO)
   add_custom_command(TARGET ${target} POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -DFRAMEWORK=$<TARGET_BUNDLE_DIR:${target}>
@@ -70,9 +83,9 @@ if(AXIAL_BUILD_APP)
   # Swift-linked Xcode targets do not infer the C++ runtime from a static archive.
   target_link_libraries(axial-bridge PRIVATE axial-options PUBLIC c++)
   set(axial_app_sources
-    app/Axial.swift app/AppLifecycle.swift app/AxisMeter.swift app/DeviceCatalog.swift
+    app/Axial.swift app/AppLifecycle.swift app/AppInstance.swift app/AxisMeter.swift app/DeviceCatalog.swift
     app/Diagnostics.swift app/NativeControls.swift app/SceneTest.swift app/ServiceClient.swift
-    app/ServiceLifecycle.swift app/SessionLog.swift app/TestModel.swift app/TestNavigation.swift)
+    app/ServiceLifecycle.swift app/SessionLog.swift app/TestModel.swift app/TestNavigation.swift app/WebSetup.swift)
   include(cmake/Resources.cmake)
   add_executable(Axial MACOSX_BUNDLE app/AxialApp.swift ${axial_app_sources} ${axial_resources})
   axial_swift_platform(Axial)
@@ -81,14 +94,16 @@ if(AXIAL_BUILD_APP)
   set_target_properties(Axial PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/app/Manifests/Axial.plist.in"
     XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED NO)
   configure_file(app/Manifests/AxialService.plist.in "${CMAKE_BINARY_DIR}/generated/AxialService.plist" @ONLY)
-  add_dependencies(Axial axial-assets axial-service axialctl)
+  add_dependencies(Axial axial-assets axial-service axialctl axial-web-setup)
   set(bundle_command "${CMAKE_COMMAND}" -DAPP=$<TARGET_BUNDLE_DIR:Axial>
     -DSERVICE=$<TARGET_FILE:axial-service> -DCLI=$<TARGET_FILE:axialctl>
     -DGENERATED=${CMAKE_BINARY_DIR}/generated -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
+    -DBOOST_SOURCE=${axial_boost_SOURCE_DIR} -DTLS_SOURCE=${AXIAL_TLS_SOURCE}
+    -DWEB_SETUP=$<TARGET_FILE:axial-web-setup>
     -DIDENTITY=${AXIAL_SIGN_IDENTITY} -P "${CMAKE_SOURCE_DIR}/cmake/Bundle.cmake")
   add_custom_command(TARGET Axial POST_BUILD COMMAND ${bundle_command} VERBATIM)
   # Refresh embedded helpers even when only the service/CLI was rebuilt.
-  add_custom_target(axial-bundle ALL COMMAND ${bundle_command} DEPENDS Axial axial-service axialctl VERBATIM)
+  add_custom_target(axial-bundle ALL COMMAND ${bundle_command} DEPENDS Axial axial-service axialctl axial-web-setup VERBATIM)
 endif()
 
 include(cmake/Tests.cmake)

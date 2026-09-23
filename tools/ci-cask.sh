@@ -2,7 +2,8 @@
 set -euo pipefail
 [[ "${GITHUB_ACTIONS:-}" == true ]] || { echo 'Installation checks require a disposable GitHub runner.' >&2; exit 1; }
 brew update
-version=$(sed -n 's/project(Axial VERSION \([^ ]*\).*/\1/p' CMakeLists.txt)
+version=$(<release/VERSION)
+[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Invalid artifact VERSION' >&2; exit 1; }
 tap=$(mktemp -d)
 bash tools/generate-cask.sh "$version" release "$tap/Casks/axial.rb"
 git -C "$tap" init
@@ -24,6 +25,11 @@ sudo rm "$foreign/Resources/Info.plist"
 sudo rmdir "$foreign/Resources" "$foreign"
 brew install --cask consi/axial-ci/axial
 codesign --verify --deep --strict /Applications/Axial.app
+web_credentials='/Library/Application Support/Axial/Web'
+[[ -x /Applications/Axial.app/Contents/Library/Helpers/axial-web-setup ]]
+# Package installation must not need a GUI session, create a CA, alter trust,
+# or configure network addresses. The app owns that permission flow.
+[[ ! -e "$web_credentials" && ! -e /Library/LaunchDaemons/pro.jest.axial-web-loopback.plist ]]
 mkdir -p "$HOME/Library/Application Support/Axial"
 touch "$HOME/Library/Application Support/Axial/ci-preserve"
 # Refuse removal if another driver has replaced a framework.
@@ -33,4 +39,5 @@ if brew uninstall --cask consi/axial-ci/axial; then exit 1; fi
 sudo /usr/libexec/PlistBuddy -c 'Set :CFBundleIdentifier pro.jest.3DconnexionClient' "$foreign/Resources/Info.plist"
 brew uninstall --cask consi/axial-ci/axial
 [[ ! -e /Applications/Axial.app && ! -e "$foreign" && ! -e /Library/Frameworks/3DconnexionNavlib.framework ]]
+[[ ! -e "$web_credentials" && ! -e /Library/LaunchDaemons/pro.jest.axial-web-loopback.plist ]]
 [[ -e "$HOME/Library/Application Support/Axial/ci-preserve" ]]

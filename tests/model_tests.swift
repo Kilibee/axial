@@ -38,6 +38,17 @@ actor ResponsiveControl: ServiceRequesting {
 
 @main enum ModelTests {
     @MainActor static func main() async throws {
+        // The chart includes native and WebSocket clients, including older status
+        // responses which have no web field.
+        for (native, web, expected) in [(2, Optional<Int>.none, 2), (2, 0, 2), (2, 3, 5), (0, 3, 3)] {
+            let diagnosticsModel = Model(live: false)
+            let webStatus = web.map {WebStatus(enabled: true, listening: true, connections: $0, error: "")}
+            let status = Status(web: webStatus, devices: [], clients: native, reports: 0, overflows: 0, rejected: 0, foregroundApp: "", accessibility: false, mock: true)
+            diagnosticsModel.acceptStatus(try JSONEncoder().encode(status))
+            precondition(diagnosticsModel.diagnostics.samples.last?.clients == expected)
+            diagnosticsModel.shutdown()
+        }
+        print("PASS: connected-client chart includes native and WebSocket connections")
         let explorer = DeviceCatalog.layouts[0x046dc627]!
         precondition(explorer.name == "SpaceExplorer" && explorer.buttons.count == 15)
         precondition(explorer.buttonName(slot: 10) == "Fit" && explorer.buttonName(slot: 14) == "2D")

@@ -117,17 +117,16 @@ struct Session {
         if(hasExtents&&!validBox(extents.box))return;
         if(hasExtents)scale=std::max(1e-3,extents.box.max.y-extents.box.min.y);
         if(closed||!std::isfinite(scale))return;
-        sn::navigate(c,pivot,input.axes,dt,scale,input.flags&sn::Flags::orbit,rotatable,perspective);
+        sn::NavigationView view{c,pivot,perspective,rotatable,bool(input.flags&sn::Flags::orbit),hasExtents};
+        if(hasExtents)view.extents={extents.box.min.x,extents.box.min.y,extents.box.min.z,extents.box.max.x,extents.box.max.y,extents.box.max.z};
+        view.advance(input.axes,dt,scale);c=view.camera;
         double next[16]={c.right.x,c.right.y,c.right.z,0,c.up.x,c.up.y,c.up.z,0,c.back.x,c.back.y,c.back.z,0,c.position.x,c.position.y,c.position.z,1};
         for(double x:next)if(!std::isfinite(x))return;
         for(int i=0;i<16;++i)affine.matrix[rowMajor?(i%4)*4+i/4:i]=next[i];
         set("transaction",value_t(long(1)));if(closed)return;
         set("view.affine",affine);if(closed)return;
         if(hasExtents&&input.axes[1]){
-            double factor=std::exp(std::clamp(input.axes[1]/350.0*dt*2.0,-1.0,1.0));
-            double cx=(extents.box.min.x+extents.box.max.x)/2,cy=(extents.box.min.y+extents.box.max.y)/2;
-            extents.box.min.x=cx+(extents.box.min.x-cx)*factor;extents.box.max.x=cx+(extents.box.max.x-cx)*factor;
-            extents.box.min.y=cy+(extents.box.min.y-cy)*factor;extents.box.max.y=cy+(extents.box.max.y-cy)*factor;
+            extents.box.min.x=view.extents[0];extents.box.min.y=view.extents[1];extents.box.max.x=view.extents[3];extents.box.max.y=view.extents[4];
             if(validBox(extents.box))set("view.extents",extents);if(closed)return;
         }
         set("transaction",value_t(long(0)));

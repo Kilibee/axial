@@ -11,7 +11,7 @@ typedef struct ConnexionDeviceState {
     int32_t value;
     uint64_t time;
     uint8_t report[8];
-    uint16_t buttons8;
+    union {uint16_t buttons8;uint16_t appEventPressed;};
     int16_t axis[6];
     uint16_t address;
     uint32_t buttons;

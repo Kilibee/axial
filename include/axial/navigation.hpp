@@ -25,4 +25,19 @@ inline void navigate(Camera& c,Vec pivot,const std::array<int16_t,6>& a,double d
         if(orbit)c.position=pivot+rotate(c.position-pivot,axis,angle);
     }
 }
+// Transport-independent view step. Native callbacks and asynchronous web
+// callbacks populate the same snapshot, then publish its resulting properties.
+struct NavigationView {
+    Camera camera;
+    Vec pivot;
+    bool perspective=true,rotatable=true,orbit=true,hasExtents=false;
+    std::array<double,6> extents{};
+    void advance(const std::array<int16_t,6>& axes,double dt,double scale){
+        navigate(camera,pivot,axes,dt,scale,orbit,rotatable,perspective);
+        if(!perspective&&hasExtents&&axes[1]){
+            double factor=std::exp(std::clamp(axes[1]/350.0*std::clamp(dt,0.0,0.05)*2.0,-1.0,1.0));
+            for(int i=0;i<2;++i){double centre=extents[i]/2+extents[i+3]/2;extents[i]=centre+(extents[i]-centre)*factor;extents[i+3]=centre+(extents[i+3]-centre)*factor;}
+        }
+    }
+};
 }

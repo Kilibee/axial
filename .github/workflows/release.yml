@@ -21,15 +21,17 @@ jobs:
         env:
           RELEASE_REF: ${{ github.ref }}
         run: |
-          [[ "$RELEASE_REF" =~ ^refs/tags/v([0-9]+\.[0-9]+\.[0-9]+)$ ]]
-          version="${BASH_REMATCH[1]}"
-          configured=$(sed -n 's/project(Axial VERSION \([^ ]*\).*/\1/p' CMakeLists.txt)
-          [[ "$version" == "$configured" ]]
-          git merge-base --is-ancestor HEAD origin/main
+          version=$(bash tools/release-version.sh "$RELEASE_REF")
+          git merge-base --is-ancestor HEAD origin/main || {
+            echo '::error::Release commit must belong to origin/main'
+            exit 1
+          }
           echo "version=$version" >> "$GITHUB_OUTPUT"
   validate:
     needs: version
     uses: ./.github/workflows/build.yml
+    with:
+      version: ${{ needs.version.outputs.version }}
   publish:
     needs: [version, validate]
     runs-on: ubuntu-latest

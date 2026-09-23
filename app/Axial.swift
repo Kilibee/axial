@@ -37,7 +37,11 @@ struct Profile: Codable, Equatable {
         }
     }
 }
-struct Configuration: Codable {var version = 1; var profiles = ["*": Profile()]}
+struct WebConfiguration: Codable {
+    var enabled = true
+}
+struct WebStatus: Codable {var enabled: Bool;var listening: Bool;var connections: Int;var error: String}
+struct Configuration: Codable {var version = 1; var profiles = ["*": Profile()];var web: WebConfiguration? = nil}
 struct Device: Codable, Identifiable {
     var id: Int; var vendor: Int; var product: Int; var name: String
     var axes: [Int]; var buttons: UInt32
@@ -46,12 +50,15 @@ struct Device: Codable, Identifiable {
     var displayName: String {layout?.name ?? name}
 }
 struct Status: Codable {
+    var web: WebStatus? = nil
     var devices: [Device]; var clients: Int; var reports: UInt64; var overflows: UInt64
     var rejected: UInt64; var foregroundApp: String; var accessibility: Bool; var mock: Bool
+    var connectedClients: Int {clients + (web?.connections ?? 0)}
 }
 struct AppCommand: Codable, Identifiable {var id: String; var label: String}
 
 @MainActor final class Model: ObservableObject {
+    let webSetup = WebSetupCoordinator(operations: NativeWebSetup(helper: Bundle.main.bundleURL.appendingPathComponent("Contents/Library/Helpers/axial-web-setup")))
     @Published var status: Status?
     @Published var config = Configuration()
     @Published var selected = "*"
@@ -126,6 +133,7 @@ struct AppCommand: Codable, Identifiable {var id: String; var label: String}
                     if self?.loaded == false {await self?.load()}
                     if self?.hasUnsavedChanges == true {await self?.save()}
                     if count % 3 == 0 {await self?.loadCommands()}
+                    if count % 5 == 0 {await self?.refreshWebSetup()}
                 }
                 count += 1
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
@@ -145,7 +153,7 @@ struct AppCommand: Codable, Identifiable {var id: String; var label: String}
             let previousDevice = device
             status = newStatus
             let now = previewNow()
-            diagnostics.record(time: Double(now) / 1_000_000_000, wall: Date(), reports: newStatus.reports, clients: newStatus.clients, overflows: newStatus.overflows, ignored: newStatus.rejected)
+            diagnostics.record(time: Double(now) / 1_000_000_000, wall: Date(), reports: newStatus.reports, clients: newStatus.connectedClients, overflows: newStatus.overflows, ignored: newStatus.rejected)
             if !newStatus.devices.contains(where: {$0.id == selectedDevice}) {selectedDevice = newStatus.devices.first?.id}
             if previousDevice?.id != device?.id || previousDevice?.vendor != device?.vendor || previousDevice?.product != device?.product {recording = nil}
         } else {
@@ -227,6 +235,35 @@ struct AppCommand: Codable, Identifiable {var id: String; var label: String}
     func loadCommands() async {
         let data = await client.request("{\"op\":\"getCommands\"}")
         if !stopped, let value = try? JSONDecoder().decode([String: [AppCommand]].self, from: data) {commands = value}
+    }
+    func editWeb(_ change: (inout WebConfiguration) -> Void) {
+        guard configurationReady else {return}
+        var web = config.web ?? WebConfiguration();change(&web);config.web = web;editRevision += 1
+        saveTask?.cancel()
+        saveTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            guard !Task.isCancelled else {return};await self?.save()
+        }
+    }
+    func refreshWebSetup() async {
+        guard status?.mock == false, configurationReady else {return}
+        let client = self.client
+        await webSetup.refresh(enabled: config.web?.enabled ?? true, listening: status?.web?.listening ?? false, listenerError: status?.web?.error ?? "") {
+            _ = await client.request("{\"op\":\"retryWeb\"}")
+        }
+    }
+    func setUpWeb() async {
+        guard status?.mock == false, !stopped, config.web?.enabled != false else {return}
+        let client = self.client
+        let window = NSApp.keyWindow ?? (NSApp.delegate as? AxialAppDelegate)?.settingsWindow
+        await webSetup.setUp(restoreWindow: { [weak self, weak window] in
+            guard self?.quitting == false, self?.stopped == false else {return}
+            window?.deminiaturize(nil);window?.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+        }) { [weak self] in
+            guard self?.quitting == false, self?.stopped == false else {return}
+            _ = await client.request("{\"op\":\"retryWeb\"}")
+        }
     }
     func save() async {
         guard !stopped, configurationReady else {return}
@@ -499,8 +536,33 @@ struct SettingsView: View {
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(6)
             }
             DiagnosticsCharts(samples: model.diagnostics.samples).equatable()
+            WebCompatibilityView(model: model, setup: model.webSetup)
             if model.status?.mock == true {Label("Mock input service", systemImage: "testtube.2").foregroundStyle(.orange)}
             Spacer(minLength: 0)
+        }
+    }
+}
+struct WebCompatibilityView: View {
+    @ObservedObject var model: Model
+    @ObservedObject var setup: WebSetupCoordinator
+    var body: some View {
+        GroupBox("WebSocket API compatibility") {
+            VStack(alignment: .leading, spacing: 8) {
+                Toggle("Enable web navigation", isOn: Binding(get: {model.config.web?.enabled ?? true}, set: {value in model.editWeb {$0.enabled = value}}))
+                    .disabled(setup.busy)
+                HStack {
+                    Text(model.config.web?.enabled == false ? "Web navigation is disabled." : (setup.ready ? (model.status?.web?.listening == true ? "Ready" : (model.status?.web?.error.isEmpty == false ? (model.status?.web?.error ?? "") : setup.message)) : setup.message))
+                        .font(.caption).textSelection(.enabled)
+                    Spacer()
+                    if setup.busy {ProgressView().controlSize(.small)}
+                    Button(setup.ready ? "Check / Repair…" : "Set Up…") {Task {await model.setUpWeb()}}
+                        .disabled(setup.busy || model.config.web?.enabled == false || model.status?.mock != false)
+                }
+                if !setup.ready && model.config.web?.enabled != false {
+                    Text("Allow Axial to configure its local address and approve its web certificate. macOS may ask for your password. Axial checks this setup automatically.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }.padding(6).disabled(!model.configurationReady)
         }
     }
 }

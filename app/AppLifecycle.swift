@@ -8,13 +8,36 @@ import SwiftUI
     private(set) var statusItem: NSStatusItem?
     private var quitting = false
     private var handleRelaunches = false
+    private let singleInstance: Bool
+    private let instance = AppInstance()
+    private var reopenObserver: NSObjectProtocol?
     private let makeModel: @MainActor () -> Model
-    init(makeModel: @escaping @MainActor () -> Model = {Model()}) {
-        self.makeModel = makeModel;super.init()
+    init(singleInstance: Bool = true, makeModel: @escaping @MainActor () -> Model = {Model()}) {
+        self.singleInstance = singleInstance;self.makeModel = makeModel;super.init()
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        if singleInstance {
+            // Register first so a second launch cannot lose its reopen request
+            // while this process is still constructing the menu and model.
+            reopenObserver = DistributedNotificationCenter.default().addObserver(forName: AppInstance.showSettings, object: AppInstance.user, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    guard let self, self.instance.ownsLock, !self.quitting else {return}
+                    self.openSettings(nil)
+                }
+            }
+            do {
+                guard try instance.claim() else {
+                    DistributedNotificationCenter.default().postNotificationName(AppInstance.showSettings, object: AppInstance.user, userInfo: nil, deliverImmediately: true)
+                    NSApp.terminate(nil);return
+                }
+            } catch {
+                let alert = NSAlert();alert.messageText = "Axial could not secure its app session."
+                alert.informativeText = "Check permissions on the per-user Axial socket directory, then try again."
+                alert.runModal();NSApp.terminate(nil);return
+            }
+        }
         installMenu()
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         let icon = NSImage(systemSymbolName: "move.3d", accessibilityDescription: "Axial")?
@@ -67,7 +90,7 @@ import SwiftUI
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        guard handleRelaunches, !flag else {return false}
+        guard handleRelaunches else {return false}
         openSettings(nil)
         return true
     }
@@ -83,7 +106,10 @@ import SwiftUI
         return .terminateLater
     }
 
-    func applicationWillTerminate(_ notification: Notification) {model?.shutdown()}
+    func applicationWillTerminate(_ notification: Notification) {
+        model?.shutdown();instance.release()
+        if let reopenObserver {DistributedNotificationCenter.default().removeObserver(reopenObserver)}
+    }
 
     private func installMenu() {
         let menu = NSMenu()

@@ -33,7 +33,8 @@ cask "axial" do
     SHELL
   end
 
-  uninstall quit:    "pro.jest.Axial",
+  uninstall script:  { executable: "/Applications/Axial.app/Contents/Library/Helpers/axial-web-setup", args: ["--uninstall"], sudo: true },
+            quit:    "pro.jest.Axial",
             pkgutil: @RECEIPTS@
 
   caveats <<~EOS
@@ -41,6 +42,7 @@ cask "axial" do
     This installer requires administrator access. Binaries are ad-hoc signed; the package is not notarized.
     macOS may require approval in Privacy & Security before Axial can run.
     Open /Applications/Axial.app after installation and grant Accessibility access for shortcuts.
+    For web navigation, approve Set Up in Axial's Service & diagnostics pane.
     Disable Start at login and quit Axial before uninstalling. Saved profiles are retained.
   EOS
 end

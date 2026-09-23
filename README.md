@@ -82,6 +82,7 @@ service APIs for tools and integrations:
 | --- | --- | --- |
 | 3Dconnexion Client API | `/Library/Frameworks/3DconnexionClient.framework` | Compatibility with applications using the legacy 3Dconnexion client framework |
 | Navlib API | `/Library/Frameworks/3DconnexionNavlib.framework` | Compatibility with applications using the FreeCAD/3Dconnexion navigation library |
+| 3DconnexionJS API | HTTPS discovery at `https://127.51.68.120:8181/3dconnexion/nlproxy`; WAMP 1.0 at `wss://127.51.68.120:8181/` | Browser-based 3D navigation compatible with 3DconnexionJS |
 | Event stream | Unix socket at `/tmp/axial-$UID/events` | Subscribe to device, motion and button events, including from a background monitor, or inject events in mock mode; see [the event stream API](docs/events.md) |
 | Control API | Unix socket at `/tmp/axial-$UID/events.control` | Query status and configuration, update configuration, publish command catalogs, request Accessibility permission, or stop the service |
 
@@ -89,6 +90,12 @@ Here `$UID` means the numeric Unix user ID. In a shell, get it with `id -u` (or
 use `$UID` in shells that provide that variable). The socket directory and both
 socket names can be relocated together with the `AXIAL_SOCKET` environment
 variable. The socket APIs are local to the logged-in user.
+
+Web navigation is enabled by default. In **Service & diagnostics → WebSocket API
+compatibility**, click **Set Up…** and approve the macOS prompts to configure
+certificates and the loopback address. Axial checks setup health and offers repair
+or renewal when needed. No separate OpenSSL installation is required; quitting
+Axial closes the web listener.
 
 ## Install and use
 

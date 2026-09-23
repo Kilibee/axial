@@ -3,6 +3,7 @@ set -euo pipefail
 tag="v$VERSION"
 package="Axial-$VERSION-universal.pkg"
 cd release
+[[ $(<VERSION) == "$VERSION" ]] || { echo 'Release artifact version does not match tag' >&2; exit 1; }
 sha256sum -c SHA256SUMS
 if ! gh release view "$tag" --repo consi/axial >/dev/null 2>&1; then
   gh release create "$tag" --repo consi/axial --verify-tag --draft --title "Axial $VERSION" --notes-file ../tools/release-notes.md

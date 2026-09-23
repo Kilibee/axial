@@ -21,5 +21,7 @@ int main(int argc,char** argv) {
         request="{\"op\":\"setConfig\",\"config\":"+data+"}";
     } else {fprintf(stderr,"usage: axialctl [status|stop|monitor|config|commands|set-config < settings.json]\n");return 2;}
     auto response=sn::request(request);std::cout<<response<<std::endl;
-    return response.find("\"error\"")!=std::string::npos?1:0;
+    // Service failures are top-level error objects. Status also contains a
+    // nested web.error field, which must not turn a successful query into failure.
+    return response.starts_with("{\"error\":")?1:0;
 }
