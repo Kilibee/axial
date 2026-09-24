@@ -86,6 +86,32 @@ and [buttons](https://developer.apple.com/design/human-interface-guidelines/butt
 For performance checks, use the `benchmark` target. Timing runs must not overlap
 builds or other tests.
 
+Additional isolated workloads are available after a native build:
+
+```sh
+AXIAL_TEST_SCENE="$PWD/build/native/generated/ToyCar.scn" build/native/bin/scene-performance
+build/native/bin/navlib-bench build/native/bin/axial-service build/native/bin/3DconnexionNavlib.framework/3DconnexionNavlib
+build/native/bin/axial-web-setup --prepare "$PWD/build/web-benchmark-credentials"
+build/native/bin/web-bench "$PWD/build/web-benchmark-credentials"
+```
+
+The scene workload requires an unlocked desktop and fails if it cannot sustain
+visible movement or schedules idle delegate frames. It reports idle, moving,
+stopped and hidden phases. Navlib reports separate client/service CPU and input
+age at the camera callback (not transport latency). Web reports combined server
+and synthetic client CPU; it does not install certificates or change trust.
+Run three repetitions on an otherwise idle machine. Keep the window visible and
+record OS, architecture, display refresh rate and build configuration with results.
+The existing Client benchmark reports callback latency and event loss.
+
+For scene comparisons, save the previous `SceneTest.swift` under `build/`, add
+the instrumentation-only weak `motionSource: TestRenderer?` and
+`frameDelegate: SCNSceneRendererDelegate?` properties to its `TestSceneView`, then
+configure with `-DAXIAL_SCENE_BASELINE=/absolute/path/to/SceneTest.swift`. Run
+`scene-performance-baseline` with `AXIAL_BENCH_BASELINE=1` and the same scene and
+duration as the updated executable. Synthetic Navlib/web workloads do not replace
+profiling the user's Fusion version, document and navigation operation.
+
 ## Signing, packaging and installation
 
 Local builds use ad-hoc signing. For distribution configure a Developer ID
@@ -116,12 +142,39 @@ Native builds contain one CPU architecture; universal releases use the Xcode
 preset. The public framework names and ABI must remain compatible with clients.
 Custom developer settings belong in ignored `CMakeUserPresets.json`.
 
+Installation ownership and busy-process checks are shared in
+`tools/install-guard.sh`, embedded into generated casks and package preinstall
+scripts. Published v0.1.0, v0.2.0 and v0.2.1 manifests can recover a missing
+identifier, including incomplete installs: every surviving entry must match one
+release and at least one original Axial executable must remain. A valid Axial
+identifier also permits replacement/removal when binaries are missing. Unknown
+or modified contents without an identity are rejected. Regenerate the allowlist
+with `tools/generate-legacy-files.py` and checksum-pinned published packages. To exercise that recovery
+check locally without installing anything, run `tests/legacy_install_guard.sh`
+with the source directory and published v0.1.0 package as arguments.
+
+`tools/ci-cask.sh` covers fresh install, reinstall, upgrade, removal, reinstall
+after removal, mapped-framework and service blockers, profile retention and web
+setup preservation/cleanup. It must run on a disposable macOS runner. Homebrew
+uses cached uninstall hooks, so the new hook cannot protect an upgrade initiated
+through the old 0.1.0–0.2.1 hook. Homebrew 7 routes `brew install --cask --force`
+through upgrade logic, so it cannot replace an old cached hook. A cached-hook
+repair needs separate verification and explicit operator authorization; do not
+recommend force-install as recovery. CI tests the standalone package's guard
+against actual published releases, including damaged 0.1.0 metadata.
+Do not publish the cask until the lifecycle job passes; local guard and package
+tests alone do not validate Homebrew recovery.
+No test edits the user's installed Homebrew metadata. The standalone uninstaller
+removes web setup; Homebrew keeps it unless `--zap` is requested.
+
 ## Releases
 
 CI and releases share `.github/workflows/build.yml`. The macOS 15 ARM build is
 the canonical universal package; other jobs validate toolchains and run the exact
-canonical payload. GUI startup is a separate advisory check. Homebrew installation
-tests run only on disposable GitHub runners, never on a developer machine.
+canonical payload. GUI startup is a separate advisory check.
+The destructive Homebrew CI suite runs only on disposable GitHub runners.
+Local lifecycle checks require the operator to explicitly choose to replace and
+remove their installation; preserve profiles and existing web setup throughout.
 
 Update `tools/release-notes.md`, push to `main`, and wait for CI before pushing a
 `vMAJOR.MINOR.PATCH` tag. The tag is authoritative: release CI passes its version

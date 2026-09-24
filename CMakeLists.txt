@@ -3,7 +3,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "Use an out-of-source build, for example: cmake --preset native")
 endif()
 set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" CACHE STRING "Minimum supported macOS")
-set(AXIAL_VERSION "0.2.1" CACHE STRING "Product version; release CI supplies the tag version")
+set(AXIAL_VERSION "0.2.2" CACHE STRING "Product version; release CI supplies the tag version")
 if(NOT AXIAL_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
   message(FATAL_ERROR "AXIAL_VERSION must be MAJOR.MINOR.PATCH")
 endif()
@@ -63,6 +63,7 @@ foreach(adapter IN ITEMS Client Navlib)
   add_library(${target} SHARED ${adapter_source})
   target_link_libraries(${target} PRIVATE axial-options ${adapter_frameworks})
   set_target_properties(${target} PROPERTIES FRAMEWORK TRUE FRAMEWORK_VERSION A
+    MACOSX_FRAMEWORK_INFO_PLIST "${CMAKE_SOURCE_DIR}/app/Manifests/Framework.plist.in"
     MACOSX_FRAMEWORK_IDENTIFIER "pro.jest.${target}" VERSION 1.0.0 SOVERSION 1.0.0
     MACOSX_FRAMEWORK_BUNDLE_VERSION "1.0.0" MACOSX_FRAMEWORK_SHORT_VERSION_STRING "1.0.0"
     INSTALL_NAME_DIR /Library/Frameworks BUILD_WITH_INSTALL_NAME_DIR TRUE XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED NO)
@@ -144,7 +145,14 @@ if(AXIAL_BUILD_APP AND NOT AXIAL_SANITIZERS)
   # pkgbuild's per-bundle relocation policy is independent of CPack's package
   # install prefix. Never update an app/framework found in a development tree.
   set(CPACK_COMPONENT_RUNTIME_PLIST "${CMAKE_SOURCE_DIR}/cmake/InstallerComponents.plist")
-  set(CPACK_PREFLIGHT_RUNTIME_SCRIPT "${CMAKE_SOURCE_DIR}/tools/package-preinstall.sh")
+  file(READ "${CMAKE_SOURCE_DIR}/tools/install-guard.sh" install_guard)
+  file(READ "${CMAKE_SOURCE_DIR}/tools/legacy-files.sh" legacy_files)
+  string(REPLACE "source \"\$(dirname \"\${BASH_SOURCE[0]}\")/legacy-files.sh\"" "${legacy_files}" install_guard "${install_guard}")
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS tools/install-guard.sh tools/package-preinstall.sh tools/legacy-files.sh)
+  file(READ "${CMAKE_SOURCE_DIR}/tools/package-preinstall.sh" package_preinstall)
+  string(REPLACE "source \"\$(dirname \"$0\")/install-guard.sh\"" "${install_guard}" package_preinstall "${package_preinstall}")
+  file(WRITE "${CMAKE_BINARY_DIR}/generated/preinstall" "${package_preinstall}")
+  set(CPACK_PREFLIGHT_RUNTIME_SCRIPT "${CMAKE_BINARY_DIR}/generated/preinstall")
   # productbuild requires a supported extension for displayed installer resources.
   configure_file(LICENSE "${CMAKE_BINARY_DIR}/generated/License.txt" COPYONLY)
   set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_BINARY_DIR}/generated/License.txt")

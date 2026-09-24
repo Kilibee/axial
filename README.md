@@ -42,7 +42,16 @@ brew upgrade --cask consi/homebrew/axial
 ```
 
 To uninstall, disable **Start at login**, quit Axial and CAD applications, then run
-`brew uninstall --cask consi/homebrew/axial`. Saved profiles are retained.
+`brew uninstall --cask consi/homebrew/axial`. Saved profiles and web navigation setup
+are retained. Use `brew uninstall --cask --zap consi/homebrew/axial` to also remove
+Axial's web certificates and loopback configuration; saved profiles are still retained.
+
+The guarded installer and uninstaller refuse to change bundles while Axial or an
+application using its frameworks is running. The error lists process names and
+PIDs: quit those applications and retry. Older or incomplete bundles with missing
+identifiers can be recovered when their surviving files match a known Axial
+release. Foreign or unidentifiable bundles are rejected before installed files
+are changed.
 
 ## Build
 

@@ -1,10 +1,17 @@
 ## Fixes
 
-- Fixes macOS Installer redirecting Axial into an existing development copy instead of `/Applications/Axial.app`. App and framework installation locations are now fixed explicitly.
-- Adds package metadata checks and Homebrew install/reinstall regression tests with a registered duplicate app, ensuring the development copy remains untouched.
-- Makes the Homebrew release update resilient to GitHub temporarily omitting uploaded files from its release-by-tag API: it downloads the published asset URLs and verifies checksums directly.
+- Gives both compatibility frameworks explicit bundle identifiers and verifies their metadata in the packaged installer.
+- Checks bundle ownership and running applications before installation or removal. When Axial files are in use, the error lists process names and PIDs and leaves the installation intact.
+- Recovers complete or incomplete published 0.1.0, 0.2.0 and 0.2.1 bundles with missing identifiers when surviving files match a known release. Modified or unidentifiable remains are rejected.
+- Preserves web navigation setup during ordinary Homebrew uninstall, reinstall and upgrade with the new hooks. Use `brew uninstall --cask --zap consi/homebrew/axial` to remove web setup; saved profiles remain.
+- Stops toy-car frame callbacks while idle, stopped or hidden, and resumes on effective movement. Three local paired trials reduced median idle scene CPU from 16.9% to 2.4%; moving CPU remained essentially unchanged near 120 FPS. These are synthetic measurements on Apple M5/macOS 27, not Fusion profiling.
+- Avoids unnecessary settings updates while navigating in CAD applications, and adds installation, legacy recovery, movement and performance checks.
 
-Includes the JavaScript/WebSocket API compatibility and native-client fixes introduced in v0.2.0.
+Homebrew caches the uninstall hook from the installed release. The new safeguards
+cannot retroactively replace an older cached hook: migration from older releases
+may still encounter its identifier failure or web-setup cleanup. Homebrew 7's
+`brew install --cask --force` does not bypass that hook. This release does not edit
+installed Homebrew metadata.
 
 ## Installation
 

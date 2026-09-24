@@ -2,6 +2,10 @@ import SwiftUI
 import SceneKit
 import simd
 
+@_silgen_name("AxialPreviewActivity") func previewActivity(_ callback: @convention(c) () -> Void)
+@_silgen_name("AxialPreviewWatch") func previewWatch(_ enabled: Bool)
+private let previewActivityNotification = Notification.Name("AxialPreviewActivity")
+
 @_silgen_name("AxialPreviewStart") func previewStart()
 @_silgen_name("AxialPreviewStop") func previewStop()
 @_silgen_name("AxialPreviewNow") func previewNow() -> UInt64
@@ -44,9 +48,11 @@ final class TestRenderer: NSObject, SCNSceneRendererDelegate {
     private var device: UInt32 = 0
     private var resetRequested = false
     private var lastTime: TimeInterval = 0
+    private var idleReported = false
     private var navigation = TestNavigation()
     override init() {
         super.init()
+        previewActivity {NotificationCenter.default.post(name: previewActivityNotification, object: nil)}
         scene.rootNode.addChildNode(object)
         do {
             guard let url = Bundle.main.url(forResource: "ToyCar", withExtension: "scn") else {throw CocoaError(.fileNoSuchFile)}
@@ -55,77 +61,127 @@ final class TestRenderer: NSObject, SCNSceneRendererDelegate {
         TestModel.studio(in: scene, camera: camera)
     }
     func configure(device: UInt32, profile: Profile) {
-        lock.lock();defer {lock.unlock()}
+        lock.lock()
+        let oldDevice = self.device, oldGain = gain, oldDeadzone = deadzone, oldDominant = dominant
         self.device = device;dominant = profile.dominant
         for i in 0..<6 {
             gain[i] = ((i < 3 && !profile.translation) || (i >= 3 && !profile.rotation)) ? 0 : profile.gain[i] * (profile.invert[i] ? -1 : 1)
             deadzone[i] = profile.deadzone[i]
         }
+        let changed = oldDevice != device || oldGain != gain || oldDeadzone != deadzone || oldDominant != dominant
+        lock.unlock()
+        if changed {notifyActivity()}
     }
-    func reset() {lock.lock();resetRequested = true;lock.unlock()}
+    private func notifyActivity() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else {return}
+            NotificationCenter.default.post(name: previewActivityNotification, object: self)
+        }
+    }
+    func reset() {lock.lock();resetRequested = true;lock.unlock();notifyActivity()}
+    func pauseTiming() {frameLock.lock();lastTime = 0;idleReported = false;frameLock.unlock()}
+    private func axes() -> SIMD8<Double> {
+        lock.lock();let device = self.device, gain = self.gain, deadzone = self.deadzone, dominant = self.dominant;lock.unlock()
+        var values = SIMD8<Double>.zero;var buttons: UInt32 = 0
+        withUnsafeMutableBytes(of: &values) {bytes in
+            _ = previewRead(device, bytes.bindMemory(to: Double.self).baseAddress!, &buttons)
+        }
+        for i in 0..<6 {let x = values[i];values[i] = (x < 0 ? -1 : 1) * max(0, abs(x) - deadzone[i]) * gain[i]}
+        if dominant, let index = (0..<6).max(by: {abs(values[$0]) < abs(values[$1])}) {
+            for i in 0..<6 where i != index {values[i] = 0}
+        }
+        return values
+    }
+    var needsFrames: Bool {
+        lock.lock();let reset = resetRequested;lock.unlock()
+        return reset || axes() != .zero
+    }
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         // A tab transition can briefly leave two SceneKit views using this scene.
         guard frameLock.try() else {return};defer {frameLock.unlock()}
-        lock.lock();let device = self.device;let gain = self.gain;let deadzone = self.deadzone;let dominant = self.dominant;let reset = resetRequested;resetRequested = false;lock.unlock()
+        lock.lock();let reset = resetRequested;resetRequested = false;lock.unlock()
+        let axes = axes()
+        guard reset || axes != .zero else {
+            if !idleReported {idleReported = true;lastTime = 0;notifyActivity()}
+            return
+        }
+        idleReported = false
         if reset {navigation.reset();object.simdOrientation = simd_quatf(angle: 0, axis: SIMD3<Float>(0, 1, 0))}
         let dt = Float(lastTime == 0 ? 0 : min(max(time - lastTime, 0), 0.05));lastTime = time
-        var storage = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0);var buttons: UInt32 = 0
-        withUnsafeMutableBytes(of: &storage) {bytes in
-            let axes = bytes.bindMemory(to: Double.self)
-            _ = previewRead(device, axes.baseAddress!, &buttons)
-            for i in 0..<6 {let x = axes[i];axes[i] = (x < 0 ? -1 : 1) * max(0, abs(x) - deadzone[i]) * gain[i]}
-            if dominant, let index = axes.indices.max(by: {abs(axes[$0]) < abs(axes[$1])}) {for i in 0..<6 where i != index {axes[i] = 0}}
-            guard reset || axes.contains(where: {$0 != 0}) else {return}
-            navigation.advance(horizontal: axes[0] / 350, vertical: -axes[2] / 350, zoom: axes[1] / 350, seconds: Double(dt))
-            camera.camera?.orthographicScale = navigation.scale
-            let right = camera.simdWorldRight, up = camera.simdWorldUp
-            object.position = SCNVector3(CGFloat(Double(right.x) * navigation.pan.x + Double(up.x) * navigation.pan.y), CGFloat(Double(right.y) * navigation.pan.x + Double(up.y) * navigation.pan.y), CGFloat(Double(right.z) * navigation.pan.x + Double(up.z) * navigation.pan.y))
-            let rotation = SIMD3<Float>(Float(-axes[3]), Float(axes[5]), Float(-axes[4])) / 350
-            let length = simd_length(rotation)
-            if length > 0 {object.simdOrientation = simd_normalize(simd_quatf(angle: length * dt * 1.8, axis: rotation / length) * object.simdOrientation)}
-        }
+        navigation.advance(horizontal: axes[0] / 350, vertical: -axes[2] / 350, zoom: axes[1] / 350, seconds: Double(dt))
+        camera.camera?.orthographicScale = navigation.scale
+        let right = camera.simdWorldRight, up = camera.simdWorldUp
+        object.position = SCNVector3(CGFloat(Double(right.x) * navigation.pan.x + Double(up.x) * navigation.pan.y), CGFloat(Double(right.y) * navigation.pan.x + Double(up.y) * navigation.pan.y), CGFloat(Double(right.z) * navigation.pan.x + Double(up.z) * navigation.pan.y))
+        let rotation = SIMD3<Float>(Float(-axes[3]), Float(axes[5]), Float(-axes[4])) / 350
+        let length = simd_length(rotation)
+        if length > 0 {object.simdOrientation = simd_normalize(simd_quatf(angle: length * dt * 1.8, axis: rotation / length) * object.simdOrientation)}
     }
 }
 // Closing settings keeps the menu-bar app alive, so dismantle alone is insufficient.
 // Render at full speed only while the test scene can actually be seen.
 final class TestSceneView: SCNView {
+    weak var motionSource: TestRenderer?
+    weak var frameDelegate: SCNSceneRendererDelegate?
     private var observers: [NSObjectProtocol] = []
+    private var watching = false
+    private func watch(_ enabled: Bool) {
+        guard watching != enabled else {return}
+        watching = enabled;previewWatch(enabled)
+    }
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
         let center = NotificationCenter.default
         observers.forEach(center.removeObserver);observers.removeAll()
+        observers.append(center.addObserver(forName: previewActivityNotification, object: nil, queue: .main) { [weak self] note in
+            // Active frames already sample the latest input. Only wake a
+            // sleeping scene here, avoiding work at the HID report rate.
+            if self?.rendersContinuously == false || note.object is TestRenderer {self?.updateRendering()}
+        })
         if let window {
             for name in [NSWindow.didChangeOcclusionStateNotification, NSWindow.didMiniaturizeNotification,
                          NSWindow.didDeminiaturizeNotification, NSWindow.didBecomeKeyNotification] {
                 observers.append(center.addObserver(forName: name, object: window, queue: .main) { [weak self] _ in self?.updateRendering() })
             }
-            observers.append(center.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: .main) { [weak self] _ in self?.setRendering(false) })
+            observers.append(center.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: .main) { [weak self] _ in self?.watch(false);self?.setRendering(false) })
             for name in [NSApplication.didHideNotification, NSApplication.didUnhideNotification] {
                 observers.append(center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in self?.updateRendering() })
             }
         }
         updateRendering()
     }
-    private func setRendering(_ enabled: Bool) {rendersContinuously = enabled;isPlaying = enabled}
+    private func setRendering(_ enabled: Bool) {
+        // SceneKit schedules delegate updates even with isPlaying=false.
+        // Detach the delegate as well so an idle view has no frame callback.
+        delegate = enabled ? (frameDelegate ?? motionSource) : nil
+        guard rendersContinuously != enabled || isPlaying != enabled else {return}
+        motionSource?.pauseTiming()
+        rendersContinuously = enabled;isPlaying = enabled
+    }
     func updateRendering() {
         let visible = window.map {$0.isVisible && !$0.isMiniaturized && $0.occlusionState.contains(.visible)} ?? false
-        setRendering(visible && !isHiddenOrHasHiddenAncestor && !NSApp.isHidden)
+        let shown = visible && !isHiddenOrHasHiddenAncestor && !NSApp.isHidden
+        let enabled = shown && motionSource?.needsFrames == true
+        setRendering(enabled)
+        watch(shown && !enabled && motionSource != nil)
     }
     override func viewDidHide() {super.viewDidHide();updateRendering()}
     override func viewDidUnhide() {super.viewDidUnhide();updateRendering()}
-    deinit {observers.forEach(NotificationCenter.default.removeObserver)}
+    deinit {if watching {previewWatch(false)};observers.forEach(NotificationCenter.default.removeObserver)}
 }
 struct TestScene: NSViewRepresentable {
     let renderer: TestRenderer
     let device: UInt32
     let profile: Profile
     func makeNSView(context: Context) -> SCNView {
-        let view = TestSceneView();view.scene = renderer.scene;view.pointOfView = renderer.camera;view.delegate = renderer
+        let view = TestSceneView();view.motionSource = renderer;view.scene = renderer.scene;view.pointOfView = renderer.camera;view.delegate = renderer
         view.preferredFramesPerSecond = 120;view.antialiasingMode = .multisampling4X
         view.backgroundColor = .clear;return view
     }
     func updateNSView(_ view: SCNView, context: Context) {renderer.configure(device: device, profile: profile)}
-    static func dismantleNSView(_ view: SCNView, coordinator: ()) {view.rendersContinuously = false;view.isPlaying = false;view.delegate = nil}
+    static func dismantleNSView(_ view: SCNView, coordinator: ()) {
+        if let view = view as? TestSceneView {view.motionSource = nil;view.updateRendering()}
+        view.rendersContinuously = false;view.isPlaying = false;view.delegate = nil
+    }
 }
 struct TestTab: View {
     @EnvironmentObject var model: Model

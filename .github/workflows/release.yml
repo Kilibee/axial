@@ -86,6 +86,7 @@ jobs:
             git -C tap commit -m "axial $VERSION"
           fi
           brew tap --custom-remote consi/homebrew "$PWD/tap"
+          brew trust consi/homebrew
           brew style --cask consi/homebrew/axial
           brew fetch --cask consi/homebrew/axial
           brew install --cask consi/homebrew/axial

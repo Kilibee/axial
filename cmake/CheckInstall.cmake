@@ -1,17 +1,8 @@
-# Also runs during CPack staging. Check every identity before copying any bundle.
+# Validate all existing bundles before copying any files.
 set(root "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}")
-foreach(bundle IN ITEMS Applications/Axial.app Library/Frameworks/3DconnexionClient.framework Library/Frameworks/3DconnexionNavlib.framework)
-  if(EXISTS "${root}/${bundle}")
-    get_filename_component(name "${bundle}" NAME_WE)
-    if(name STREQUAL "Axial")
-      set(plist "${root}/${bundle}/Contents/Info.plist")
-    else()
-      set(plist "${root}/${bundle}/Resources/Info.plist")
-    endif()
-    execute_process(COMMAND /usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "${plist}"
-      OUTPUT_VARIABLE identity OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE status)
-    if(NOT status EQUAL 0 OR NOT identity STREQUAL "pro.jest.${name}")
-      message(FATAL_ERROR "Refusing to replace ${root}/${bundle}; uninstall the vendor driver first")
-    endif()
-  endif()
-endforeach()
+if(EXISTS "${root}")
+  execute_process(COMMAND /bin/bash -c
+    "source \"$1\"; axial_check \"$2\"" axial-install
+    "${CMAKE_CURRENT_LIST_DIR}/../tools/install-guard.sh" "${root}"
+    COMMAND_ERROR_IS_FATAL ANY)
+endif()

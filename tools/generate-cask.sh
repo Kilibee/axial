@@ -18,4 +18,16 @@ url="https://github.com/consi/axial/releases/download/v$version/$package"
 mkdir -p "$(dirname "$output")"
 sed -e "s|@VERSION@|$version|g" -e "s|@SHA256@|$digest|g" \
   -e "s|@URL@|$url|g" -e "s|@RECEIPTS@|$receipts|g" \
-  "$(dirname "$0")/cask.rb.in" > "$output"
+  "$(dirname "$0")/cask.rb.in" | /usr/bin/awk -v guard="$(dirname "$0")/install-guard.sh" '
+    /^@INSTALL_GUARD@$/ {
+      while ((getline line < guard) > 0) {
+        if (line ~ /^source .*legacy-files[.]sh/) {
+          manifest=guard;sub(/install-guard[.]sh$/, "legacy-files.sh", manifest)
+          while ((getline record < manifest) > 0) print (length(record) ? "      " record : "")
+          close(manifest)
+        } else print (length(line) ? "      " line : "")
+      }
+      close(guard); next
+    }
+    {print}
+  ' > "$output"

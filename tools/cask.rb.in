@@ -11,31 +11,34 @@ cask "axial" do
 
   pkg "Axial-#{version}-universal.pkg"
 
-  uninstall_preflight_steps do
-    run "/bin/bash", args: ["-c", <<~SHELL]
-      set -euo pipefail
-      for name in Axial 3DconnexionClient 3DconnexionNavlib; do
-        if [[ "$name" == Axial ]]; then
-          bundle=/Applications/Axial.app
-          plist="$bundle/Contents/Info.plist"
-        else
-          bundle="/Library/Frameworks/$name.framework"
-          plist="$bundle/Resources/Info.plist"
-        fi
-        if [[ -e "$bundle" || -L "$bundle" ]]; then
-          identity=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$plist")
-          [[ "$identity" == "pro.jest.$name" ]] || {
-            echo "Refusing to remove non-Axial bundle: $bundle" >&2
-            exit 1
-          }
-        fi
-      done
+  preflight_steps do
+    run "/bin/bash", args: ["-c", <<~'SHELL'], sudo: true
+@INSTALL_GUARD@
+      axial_check /
     SHELL
   end
 
-  uninstall quit:    "pro.jest.Axial",
-            script:  { executable: "/Applications/Axial.app/Contents/Library/Helpers/axial-web-setup", args: ["--uninstall"], sudo: true },
-            pkgutil: @RECEIPTS@
+  uninstall_preflight_steps do
+    run "/bin/bash", args: ["-c", <<~'SHELL'], sudo: true
+@INSTALL_GUARD@
+      axial_check /
+    SHELL
+  end
+
+  uninstall pkgutil: @RECEIPTS@
+
+  # Zap runs after package removal, so use the helper from the cached package.
+  zap script: { executable: "/bin/bash", args: ["-c", <<~'SHELL', "axial-zap", "#{staged_path}/Axial-#{version}-universal.pkg"], sudo: true }
+    set -euo pipefail
+    [[ $(/usr/bin/shasum -a 256 "$1" | /usr/bin/awk '{print $1}') == '@SHA256@' ]]
+    temporary=$(/usr/bin/mktemp -d)
+    trap '/bin/rm -rf "$temporary"' EXIT
+    /usr/sbin/pkgutil --expand-full "$1" "$temporary/package"
+    app=$(/usr/bin/find "$temporary/package" -type d -path '*/Applications/Axial.app')
+    [[ -n "$app" && "$app" != *$'\n'* ]]
+    /usr/bin/codesign --verify --deep --strict "$app"
+    "$app/Contents/Library/Helpers/axial-web-setup" --uninstall
+  SHELL
 
   caveats <<~EOS
     Uninstall the 3Dconnexion driver and quit Axial and CAD apps before installing or upgrading.
@@ -44,5 +47,6 @@ cask "axial" do
     Open /Applications/Axial.app after installation and grant Accessibility access for shortcuts.
     For web navigation, approve Set Up in Axial's Service & diagnostics pane.
     Disable Start at login and quit Axial before uninstalling. Saved profiles are retained.
+    Use brew uninstall --zap to also remove web navigation setup; ordinary uninstall preserves it.
   EOS
 end

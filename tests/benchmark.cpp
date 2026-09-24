@@ -12,12 +12,18 @@
 
 namespace {
 std::vector<uint64_t> samples;
+std::vector<uint64_t> injectedTimes;
+std::atomic<size_t> submitted=0;
 std::atomic<size_t> count=0;
 std::atomic<bool> measuring=false;
 std::atomic<uint64_t> buttonCallbacks=0;
 void message(uint32_t,uint32_t,void* value){
     uint64_t end=sn::now();auto state=static_cast<ConnexionDeviceState*>(value);
-    if(state->address!=1)return; // Focus-reset notifications are not injected motion samples.
+    if(state->address!=1||!measuring.load(std::memory_order_relaxed))return;
+    // Focus changes also deliver reset callbacks for device 1. Count only
+    // timestamps published by this producer, including its button reports.
+    size_t total=submitted.load(std::memory_order_acquire);
+    if(!std::binary_search(injectedTimes.begin(),injectedTimes.begin()+total,state->time))return;
     if(state->command==2){++buttonCallbacks;return;}
     if(state->command!=3||!measuring.load(std::memory_order_relaxed)||!state->time)return;
     size_t i=count.load(std::memory_order_relaxed);
@@ -81,6 +87,7 @@ int main(int argc,char** argv){
     }
     samples.resize(size_t(seconds*rate*1.2)+1000);
     std::vector<uint64_t> producerLateness(size_t(seconds*rate));
+    injectedTimes.resize(producerLateness.size());
     std::vector<uint64_t> toService(diagnose?samples.size():0),fromService(diagnose?samples.size():0);
     size_t diagnosticCount=0;int diagnosticFD=-1;std::thread diagnosticReader;
     if(diagnose){
@@ -98,6 +105,7 @@ int main(int argc,char** argv){
             std::this_thread::sleep_until(scheduled);
             if(measuring.load(std::memory_order_relaxed)&&i<producerLateness.size())producerLateness[i]=std::max<int64_t>(0,std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()-scheduled).count());
             e.kind=sn::Kind::motion;e.sequence=i;e.axes={int16_t((i%349)+1),-50,20,0,0,30};e.received=sn::now();
+            if(measuring.load(std::memory_order_relaxed)){injectedTimes[i]=e.received/1000;submitted.store(i+1,std::memory_order_release);}
             if(!sn::writeAll(inject,&e,sizeof(e)))return size_t(0);
             if(i%100==0){auto button=e;button.kind=sn::Kind::buttons;button.buttons=(i/100)%2;sn::writeAll(inject,&button,sizeof(button));}
         }return total;
