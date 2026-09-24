@@ -1,6 +1,6 @@
 # Axial
 
-![Axial settings window](axial.png)
+![Axial settings window](axial.gif)
 
 An open-source 3Dconnexion SpaceMouse and SpaceExplorer driver. Axial provides 
 six-axis navigation through native compatibility frameworks for applications 
