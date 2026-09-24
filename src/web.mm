@@ -26,6 +26,11 @@ using Error=boost::system::error_code;
 namespace {
 constexpr auto rpcURI="wss://127.51.68.120/3dconnexion#";
 constexpr auto controllerURI="wss://127.51.68.120/3dconnexion3dcontroller/";
+// Browser initialization includes image catalogs (Onshape sends over 360 KiB).
+// Leave room for RPC envelopes when receiving or reading back stored properties.
+constexpr size_t maxWebMessageBytes=2*1024*1024;
+constexpr size_t maxControllerPropertyBytes=1024*1024;
+constexpr size_t maxWebQueuedBytes=2*1024*1024;
 std::string string(const json::value& value){return value.is_string()?std::string(value.as_string()):std::string{};}
 double number(const json::value& value){return value.is_number()?value.to_number<double>():NAN;}
 bool boolean(const json::value& value){return value.is_bool()&&value.as_bool();}
@@ -137,7 +142,7 @@ struct WebServer::Impl::Session:std::enable_shared_from_this<Session> {
         if(!wamp){reply(http::status::bad_request,"WAMP v1 required",origin);return;}
         socket.set_option(ws::stream_base::decorator([](ws::response_type& r){r.set(http::field::sec_websocket_protocol,"wamp");}));
         socket.set_option(ws::stream_base::timeout::suggested(beast::role_type::server));
-        socket.read_message_max(256*1024);socket.text(true);
+        socket.read_message_max(maxWebMessageBytes);socket.text(true);
         beast::get_lowest_layer(socket).expires_never();
         socket.async_accept(request,[self=shared_from_this()](Error ec){
             if(ec){self->close();return;}self->open=true;self->send(json::array{0,self->id,1,"Axial"});self->read();
@@ -158,7 +163,7 @@ struct WebServer::Impl::Session:std::enable_shared_from_this<Session> {
     void send(json::value value){
         if(!open||closed)return;
         auto text=json::serialize(value);
-        if(outgoing.size()>=256||queuedBytes+text.size()>1024*1024){server.error("Web client output overflow");close();return;}
+        if(outgoing.size()>=256||queuedBytes+text.size()>maxWebQueuedBytes){server.error("Web client output overflow");close();return;}
         queuedBytes+=text.size();outgoing.push_back(std::move(text));if(outgoing.size()==1)write();
     }
     void write(){
@@ -169,6 +174,11 @@ struct WebServer::Impl::Session:std::enable_shared_from_this<Session> {
     }
     void read(){
         socket.async_read(buffer,[self=shared_from_this()](Error ec,size_t){
+            if(ec==ws::error::message_too_big)self->server.error("Web client message exceeds 2 MiB limit");
+            // TLS teardown can replace Beast's size error when the peer sends
+            // its WebSocket close reply after TLS close_notify. Keep that error
+            // visible too; ordinary disconnects use a different error category.
+            else if(ec&&ec.category()==net::error::get_ssl_category())self->server.error("Web client TLS read failed: "+ec.message());
             if(ec||!self->socket.got_text()){self->close();return;}
             Error parse;auto value=json::parse(beast::buffers_to_string(self->buffer.data()),parse);self->buffer.consume(self->buffer.size());
             if(parse||!value.is_array()){self->close();return;}
@@ -215,7 +225,8 @@ struct WebServer::Impl::Session:std::enable_shared_from_this<Session> {
             auto it=findController(a[3]);if(it==controllers.end()){failure(call,"Unknown controller");return;}auto c=it->second;
             const auto& values=a[4].as_object();auto properties=c->properties;
             for(const auto& entry:values)properties[entry.key()]=entry.value();
-            if(properties.size()>256||json::serialize(properties).size()>256*1024){failure(call,"Too many properties");return;}
+            if(properties.size()>256){failure(call,"Too many properties");return;}
+            if(json::serialize(properties).size()>maxControllerPropertyBytes){failure(call,"Controller properties exceed 1 MiB limit");return;}
             if(auto focus=values.if_contains("focus")){
                 if(!focus->is_bool()){failure(call,"focus must be boolean");return;}
                 c->focus=focus->as_bool();if(c->focus)server.focused=c->id;else if(server.focused==c->id)server.focused.clear();

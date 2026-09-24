@@ -1,4 +1,89 @@
 #include "web_client.hpp"
+
+void onshapeInitialization(sn::WebServer& server,unsigned port,const std::string& directory){
+    Client client(port,directory+"/root.crt");client.connect();
+    client.send(json::array{1,"3dx_rpc","wss://127.51.68.120/3dconnexion#"});
+    client.send(json::array{1,"3dconnexion","wss://127.51.68.120/3dconnexion"});
+    client.send(json::array{1,"self","https://cad.onshape.com/"});
+    auto mouse=client.call({2,"mouse","3dx_rpc:create","3dconnexion:3dmouse","0.6.0"}).as_object()["connexion"];
+    auto controller=client.call({2,"controller","3dx_rpc:create","3dconnexion:3dcontroller",mouse,json::object{{"name","Onshape"},{"version",0.6},{"rowMajorOrder",false}}}).as_object()["instance"];
+    auto target="3dconnexion:3dcontroller/"+text(controller);
+    client.send(json::array{5,target});
+    client.call({2,"focus","3dx_rpc:update",target,json::object{{"focus",true}}});
+    client.call({2,"frame","3dx_rpc:update",target,json::object{{"frame",json::object{{"timingSource",1}}}}});
+    auto commands=json::parse(R"({"activeSet":"Default","tree":{"nodes":[{"id":"Part Studio","label":"Part Studio","type":0,"nodes":[{"id":"Commands","label":"Commands","type":1,"nodes":[{"id":"extrude","label":"Extrude","type":2,"description":""}]}]},{"id":"Default","label":"Default","type":0,"nodes":[]}]}})");
+    client.call({2,"commands","3dx_rpc:update",target,json::object{{"commands",commands}}});
+    // Match the captured upload's byte count with a synthetic base64 SVG:
+    // <svg > followed by spaces and </svg>. No vendor images or document IDs.
+    json::array images{json::object{{"id","extrude"},{"type",3},{"index",0},{"data","PHN2ZyA+PC9zdmc+"}}};
+    json::array upload{2,"images","3dx_rpc:update",target,json::object{{"images",images}}};
+    constexpr size_t capturedBytes=372217;
+    while((capturedBytes-json::serialize(upload).size())%4)upload[1].as_string().push_back('x');
+    auto paddingBytes=capturedBytes-json::serialize(upload).size();
+    std::string svg="PHN2ZyA+";svg.reserve(paddingBytes+16);
+    for(size_t i=0;i<paddingBytes;i+=4)svg+="ICAg";
+    svg+="PC9zdmc+";images[0].as_object()["data"]=svg;
+    upload[4].as_object()["images"]=images;
+    CHECK(json::serialize(upload).size()==capturedBytes);
+    CHECK(client.call(upload).is_null());
+    CHECK(client.call({2,"images-read","rpc:read",target,"images"})==images);
+    CHECK(client.call({2,"commands-read","rpc:read",target,"commands"})==commands);
+
+    // Each update fits individually, but the merged properties exceed 1 MiB.
+    // A rejected update must not overwrite commands or release navigation focus.
+    client.send(json::array{2,"overflow","rpc:update",target,json::object{{"padding",std::string(700*1024,'x')},{"focus",false},{"commands",json::object{}}}});
+    auto error=client.read();
+    CHECK(error==json::array({4,"overflow","wamp.error.invalid_argument","Controller properties exceed 1 MiB limit"}));
+    CHECK(client.call({2,"focused","rpc:read",target,"focus"})==true);
+    CHECK(client.call({2,"commands-read","rpc:read",target,"commands"})==commands);
+    CHECK(client.call({2,"images-read","rpc:read",target,"images"})==images);
+    CHECK(client.call({2,"recovery","rpc:update",target,json::object{{"padding","accepted"}}}).is_null());
+    CHECK(client.call({2,"padding-read","rpc:read",target,"padding"})=="accepted");
+
+    sn::Event e;e.device=1;e.vendor=0x046d;e.product=0xc627;e.kind=sn::Kind::added;server.receive(e);
+    e.kind=sn::Kind::motion;e.axes[0]=350;e.flags=sn::Flags::orbit;server.receive(e);
+    while(client.matrices<2||client.transaction)client.callback(client.read());
+    CHECK(client.matrix[12].to_number<double>()>0);CHECK(client.moving);
+    e.axes={};server.receive(e);while(client.moving)client.callback(client.read());
+    client.call({2,"blur","rpc:update",target,json::object{{"focus",false}}});
+
+    // At the storage boundary, the read response plus its call ID exceeds 1 MiB.
+    auto boundary=client.call({2,"boundary","rpc:create","3dconnexion:3dcontroller",mouse,json::object{{"name","Storage limit"}}}).as_object()["instance"];
+    json::object properties{{"images",""}};
+    properties["images"]=std::string(1024*1024-json::serialize(properties).size(),'x');
+    CHECK(json::serialize(properties).size()==1024*1024);
+    CHECK(client.call({2,"boundary-update","rpc:update",boundary,properties}).is_null());
+    CHECK(client.call({2,std::string(64,'r'),"rpc:read",boundary,"images"})==properties["images"]);
+    client.send(json::array{2,"boundary-overflow","rpc:update",boundary,json::object{{"extra",true}}});
+    error=client.read();CHECK(error[0]==4&&error[1]=="boundary-overflow");
+    CHECK(client.call({2,"boundary-read","rpc:read",boundary,"images"})==properties["images"]);
+
+    // A transport overflow closes only the offending connection.
+    {
+        Client oversized(port,directory+"/root.crt");oversized.connect();
+        // A masked text frame declares 2 MiB + 1 bytes. Send only the header:
+        // the server must reject the length before waiting for the payload.
+        const unsigned char header[]{0x81,0xff,0,0,0,0,0,0x20,0,1,0,0,0,0};
+        net::write(oversized.socket.next_layer(),net::buffer(header));
+        beast::flat_buffer buffer;boost::system::error_code ec;
+        oversized.socket.read(buffer,ec);
+        CHECK(ec==ws::error::closed);
+        CHECK(oversized.socket.reason().code==ws::close_code::too_big);
+    }
+    auto diagnosed=[&]{
+        auto error=text(json::parse(server.status()).as_object()["error"]);
+        return error=="Web client message exceeds 2 MiB limit"||error.starts_with("Web client TLS read failed: ");
+    };
+    for(int i=0;i<100;++i){
+        if(diagnosed())break;
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    CHECK(diagnosed());
+    CHECK(client.call({2,"still-connected","rpc:read",target,"images"})==images);
+    Client fresh(port,directory+"/root.crt");fresh.connect();
+    CHECK(fresh.call({2,"fresh-mouse","rpc:create","3dconnexion:3dmouse","0.6.0"}).as_object().contains("connexion"));
+}
+
 int main(int argc,char** argv){try{
     CHECK(argc==2);std::string directory=argv[1];
     sn::WebServer server("127.0.0.1",0);sn::WebConfiguration config;
@@ -58,6 +143,7 @@ int main(int argc,char** argv){try{
         CHECK(second!=controller);client.call({2,"delete","rpc:delete",prefix+text(second)});
         client.unknownController(text(second));
     }
+    onshapeInitialization(server,port,directory);
     sn::WebServer conflict("127.0.0.1",port);conflict.configure(config);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));CHECK(json::parse(conflict.status()).as_object()["listening"]==false);
     config.enabled=false;server.configure(config);
@@ -74,6 +160,6 @@ int main(int argc,char** argv){try{
     bool closed=false;try{connected.read();}catch(const boost::system::system_error&){closed=true;}CHECK(closed);
     net::io_context probeIO;tcp::socket probe(probeIO);boost::system::error_code connectError;
     probe.connect(tcp::endpoint(net::ip::make_address("127.0.0.1"),lifetimePort),connectError);CHECK(bool(connectError));
-    std::cout<<"TLS, discovery, origins, WAMP lifecycle, camera callbacks, neutral, focus and port conflict passed\n";
+    std::cout<<"TLS, discovery, origins, WAMP lifecycle, Onshape initialization, size limits, camera callbacks, neutral, focus and port conflict passed\n";
     return 0;
 }catch(const std::exception& e){std::cerr<<e.what()<<"\n";return 1;}}
