@@ -7,6 +7,13 @@ version=$(<release/VERSION)
 [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Invalid artifact VERSION' >&2; exit 1; }
 tap=$(mktemp -d)
 bash tools/generate-cask.sh "$version" release "$tap/Casks/axial.rb"
+# Reinstall can fetch again even when the cache was pre-seeded. Always serve
+# this build's exact artifact, not a published package with the same version.
+ruby -ruri - "$tap/Casks/axial.rb" "$PWD/release/Axial-$version-universal.pkg" <<'RUBY'
+cask, package = ARGV
+url = "file://#{URI::DEFAULT_PARSER.escape(package)}"
+File.write(cask, File.read(cask).sub(/^  url .*$/, "  url #{url.dump}"))
+RUBY
 git -C "$tap" init
 git -C "$tap" -c user.name=CI -c user.email=ci@example.invalid add .
 git -C "$tap" -c user.name=CI -c user.email=ci@example.invalid commit -m 'Test cask'
@@ -14,10 +21,8 @@ brew tap --custom-remote consi/axial-ci "$tap"
 brew trust consi/axial-ci
 installed_tap=$(brew --repository consi/axial-ci)
 cp "$tap/Casks/axial.rb" "$tap/current.rb"
-cache=$(brew --cache --cask consi/axial-ci/axial)
-mkdir -p "$(dirname "$cache")"
-cp "release/Axial-$version-universal.pkg" "$cache"
 brew style --cask consi/axial-ci/axial
+brew fetch --cask --force consi/axial-ci/axial
 # A foreign framework must prevent installation before any app is written.
 foreign=/Library/Frameworks/3DconnexionClient.framework
 sudo mkdir -p "$foreign/Resources"
@@ -171,10 +176,7 @@ for old in 0.1.0 0.2.1; do
   if [[ "$old" == 0.1.0 ]]; then
     bash tests/legacy_install_guard.sh "$PWD" "$legacy/Axial-$old-universal.pkg"
   fi
-  bash tools/generate-cask.sh "$version" release "$tap/Casks/axial.rb"
-  cp "$tap/Casks/axial.rb" "$installed_tap/Casks/axial.rb"
-  cache=$(brew --cache --cask consi/axial-ci/axial)
-  mkdir -p "$(dirname "$cache")";cp "release/Axial-$version-universal.pkg" "$cache"
+  cp "$tap/current.rb" "$installed_tap/Casks/axial.rb"
   rm -f "$tap/ready"
   "$tap/hold-framework" /Library/Frameworks/3DconnexionClient.framework/3DconnexionClient "$tap/ready" &
   holder=$!
