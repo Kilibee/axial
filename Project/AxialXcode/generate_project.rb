@@ -75,7 +75,7 @@ script(assets, 'Generate icon and model', 'assets')
 
 bridge = target(project, 'axial-bridge', :static_library, ['app/bridge.cpp'], source_groups, common)
 web = target(project, 'axial-web', :static_library, ['src/web.mm'], source_groups,
-  common.merge('HEADER_SEARCH_PATHS' => "$(inherited) #{includes} #{boost} #{openssl}",
+  common.merge('SYSTEM_HEADER_SEARCH_PATHS' => "$(inherited) #{boost} #{openssl}",
                'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) BOOST_ASIO_NO_DEPRECATED'))
 web.add_dependency(bootstrap)
 
@@ -87,7 +87,7 @@ service.add_dependency(bootstrap)
 
 cli = target(project, 'axialctl', :command_line_tool, ['src/ctl.cpp'], source_groups, common)
 setup = target(project, 'axial-web-setup', :command_line_tool, ['src/web_setup.mm'], source_groups,
-  common.merge('HEADER_SEARCH_PATHS' => "$(inherited) #{includes} #{openssl}",
+  common.merge('SYSTEM_HEADER_SEARCH_PATHS' => "$(inherited) #{openssl}",
                'LIBRARY_SEARCH_PATHS' => "$(inherited) #{dependencies}/tls",
                'OTHER_LDFLAGS' => '$(inherited) -lssl -lcrypto -lc++ -framework Foundation -framework Security'))
 setup.add_dependency(bootstrap)

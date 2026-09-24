@@ -875,13 +875,16 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Sources/include",
 					"$(PROJECT_DIR)/Sources/third_party/freecad",
-					"$(PROJECT_DIR)/Build/External/_deps/axial_boost-src",
-					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "axial-web";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SYSTEM_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Build/External/_deps/axial_boost-src",
+					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
+				);
 			};
 			name = Debug;
 		};
@@ -909,7 +912,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Sources/include",
 					"$(PROJECT_DIR)/Sources/third_party/freecad",
-					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -928,6 +930,10 @@
 				);
 				PRODUCT_NAME = "axial-web-setup";
 				SDKROOT = macosx;
+				SYSTEM_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
+				);
 			};
 			name = Release;
 		};
@@ -1017,7 +1023,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Sources/include",
 					"$(PROJECT_DIR)/Sources/third_party/freecad",
-					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1036,6 +1041,10 @@
 				);
 				PRODUCT_NAME = "axial-web-setup";
 				SDKROOT = macosx;
+				SYSTEM_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
+				);
 			};
 			name = Debug;
 		};
@@ -1342,13 +1351,16 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Sources/include",
 					"$(PROJECT_DIR)/Sources/third_party/freecad",
-					"$(PROJECT_DIR)/Build/External/_deps/axial_boost-src",
-					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "axial-web";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SYSTEM_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Build/External/_deps/axial_boost-src",
+					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
+				);
 			};
 			name = Release;
 		};

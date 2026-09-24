@@ -12,6 +12,8 @@ CMake 3.29 or later, Perl, and network access for the first dependency
 build are required. Boost 1.90.0 and OpenSSL 3.5.8 are fetched and built using
 the repository's pinned CMake definitions into `Build/External/` with Unix
 Makefiles. Later builds reuse those local outputs.
+Boost and OpenSSL headers are system header paths in the Xcode targets, keeping
+third-party documentation warnings out of app build results.
 
 For a command-line build:
 
