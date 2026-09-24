@@ -4,6 +4,8 @@ Open `Axial.xcodeproj` and build the `Axial` scheme. The project has native
 targets for the app, both compatibility frameworks, the service, the CLI, and
 the web setup helper. It references the original source files in the repository;
 generated files and third-party dependencies stay under `Build/` here.
+The `Sources/` group uses folder links for `app/`, `src/`, `include/`, and
+`third_party/`, so source files are visible in their original folders.
 
 The minimum deployment target is macOS 13. Xcode 27 with the macOS 26 SDK,
 CMake 3.29 or later, Perl, and network access for the first dependency
@@ -23,6 +25,11 @@ xcodebuild -project Project/AxialXcode/Axial.xcodeproj \
 Build products are in `DerivedData/Build/Products/Release/` (or `Debug/`).
 The app bundle contains its service, CLI, setup helper, icon, model, and
 license notices. Frameworks are separate products, as in the CMake build.
+The frameworks expose their copied public headers directly; they do not define
+Clang modules.
+
+Xcode signs the assembled app locally. Debug includes `get-task-allow` so Xcode
+can attach its debugger; Release does not include that entitlement.
 
 `generate_project.rb` recreates the checked-in project with the `xcodeproj`
 Ruby gem. The generated CMake Xcode project in `build/xcode/` is independent.

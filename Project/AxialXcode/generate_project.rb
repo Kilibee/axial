@@ -20,7 +20,9 @@ sources = project.main_group.new_group('Sources')
 source_groups = %w[app src].to_h do |folder|
   [folder, sources.new_group(folder, "Sources/#{folder}")]
 end
-%w[include third_party].each { |folder| sources.new_file("Sources/#{folder}") }
+%w[include third_party].each do |folder|
+  sources.new_file("Sources/#{folder}").last_known_file_type = 'folder'
+end
 configs = project.main_group.new_group('Configuration')
 scripts = project.main_group.new_group('Scripts')
 %w[dependencies assets bundle framework].each do |name|
@@ -115,9 +117,22 @@ app = target(project, 'Axial', :application, app_files, source_groups,
                'MARKETING_VERSION' => '0.2.3', 'CURRENT_PROJECT_VERSION' => '0.2.3',
                'OTHER_SWIFT_FLAGS' => '$(inherited) -parse-as-library',
                'OTHER_LDFLAGS' => '$(inherited) -lc++'))
+app.build_configurations.each do |configuration|
+  settings = configuration.build_settings
+  settings['CODE_SIGNING_ALLOWED'] = 'YES'
+  settings['CODE_SIGN_STYLE'] = 'Manual'
+  settings['CODE_SIGN_IDENTITY'] = '-'
+  settings['ENABLE_HARDENED_RUNTIME'] = 'YES'
+  settings['CODE_SIGN_INJECT_BASE_ENTITLEMENTS'] = 'NO'
+  if configuration.name == 'Debug'
+    settings['CODE_SIGN_ENTITLEMENTS'] = '$(PROJECT_DIR)/Configuration/Debug.entitlements'
+  else
+    settings['OTHER_CODE_SIGN_FLAGS'] = '--options runtime'
+  end
+end
 link(app, bridge)
 [service, cli, setup, assets, *framework_targets].each { |item| app.add_dependency(item) }
-script(app, 'Assemble and sign app bundle', 'bundle')
+script(app, 'Assemble app bundle', 'bundle')
 
 FileUtils.mkdir_p(File.join(directory, 'Configuration'))
 version = '0.2.3'
@@ -138,6 +153,7 @@ end
 %w[Axial 3DconnexionClient 3DconnexionNavlib].each do |name|
   configs.new_file("Configuration/#{name}.plist")
 end
+configs.new_file('Configuration/Debug.entitlements')
 project.save
 { 'Axial' => app, 'Dependencies' => bootstrap }.each do |name, item|
   scheme = Xcodeproj::XCScheme.new

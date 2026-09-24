@@ -154,11 +154,11 @@
 		133C3DEB7B64CCB917BD4F512F177A18 /* AppLifecycle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppLifecycle.swift; sourceTree = "<group>"; };
 		1413B84B815CAF9AD4B7A3E5B47CE93B /* connexion.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; path = connexion.mm; sourceTree = "<group>"; };
 		165819294840FE2AC63E44F9685F8DA9 /* libaxial-bridge.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libaxial-bridge.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		19839E53845C7098964B2617 /* include */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = include; path = Sources/include; sourceTree = "<group>"; };
+		19839E53845C7098964B2617 /* include */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; name = include; path = Sources/include; sourceTree = "<group>"; };
 		1B4250182D9770E3BCF70AB9D025E9C7 /* ServiceLifecycle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ServiceLifecycle.swift; sourceTree = "<group>"; };
 		1EBA34D24D154E2F38DB769C6F2E033D /* Diagnostics.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Diagnostics.swift; sourceTree = "<group>"; };
 		29973F79A13D2A83077C63AA8CA7C523 /* TestNavigation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TestNavigation.swift; sourceTree = "<group>"; };
-		34E11CC3E097CEAB775B4CAE /* third_party */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = third_party; path = Sources/third_party; sourceTree = "<group>"; };
+		34E11CC3E097CEAB775B4CAE /* third_party */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; name = third_party; path = Sources/third_party; sourceTree = "<group>"; };
 		3A5625F4BC26E11E1B687F7A220ACF94 /* bundle.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; name = bundle.sh; path = scripts/bundle.sh; sourceTree = "<group>"; };
 		471F2D24AC4E837D03EA510D3FA24DD4 /* NativeControls.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NativeControls.swift; sourceTree = "<group>"; };
 		5B14068B9792640A3BE312088C152E5A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
@@ -185,6 +185,7 @@
 		E598D8B82DD919D967307BCDEEB9976D /* assets.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; name = assets.sh; path = scripts/assets.sh; sourceTree = "<group>"; };
 		E9C1AF0F745A654FA0CF452BC90EED84 /* axial-web-setup */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = text; path = "axial-web-setup"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB104194F100F6856DB30133675A34EF /* ctl.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = ctl.cpp; sourceTree = "<group>"; };
+		F4C06A9703FEB9E14846177E /* Debug.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; name = Debug.entitlements; path = Configuration/Debug.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -272,6 +273,7 @@
 				95186179653E6B72AA75249EA3F6A38C /* Axial.plist */,
 				02F43D12B51010293EDDA9BE19DB1AA6 /* 3DconnexionClient.plist */,
 				BB74E1ECE8590C26FF19B3F38B8D06F3 /* 3DconnexionNavlib.plist */,
+				F4C06A9703FEB9E14846177E /* Debug.entitlements */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";
@@ -426,7 +428,7 @@
 				085FF0BD18CB688204EC13A1B601D995 /* Sources */,
 				41823B6481F6B1DEA6482D665FD5210B /* Frameworks */,
 				5817E3EF9B09E06AD1FA8BB651085D20 /* Resources */,
-				1F62562CCF95FBA2AE743EB64D0E614F /* Assemble and sign app bundle */,
+				1F62562CCF95FBA2AE743EB64D0E614F /* Assemble app bundle */,
 			);
 			buildRules = (
 			);
@@ -611,7 +613,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1F62562CCF95FBA2AE743EB64D0E614F /* Assemble and sign app bundle */ = {
+		1F62562CCF95FBA2AE743EB64D0E614F /* Assemble app bundle */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -621,7 +623,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Assemble and sign app bundle";
+			name = "Assemble app bundle";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -1124,10 +1126,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 0.2.3;
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = 7N3LC4Q47Q;
+				DEVELOPMENT_TEAM = 7N3LC4Q47Q;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1141,13 +1147,15 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 0.2.3;
+				OTHER_CODE_SIGN_FLAGS = "--options runtime";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -parse-as-library";
-				PRODUCT_BUNDLE_IDENTIFIER = pro.jest.Axial;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kilibee.axial;
 				PRODUCT_NAME = Axial;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -1232,9 +1240,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_ENTITLEMENTS = "$(PROJECT_DIR)/Configuration/Debug.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 0.2.3;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
