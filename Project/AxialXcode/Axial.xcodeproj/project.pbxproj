@@ -147,42 +147,44 @@
 /* Begin PBXFileReference section */
 		02F43D12B51010293EDDA9BE19DB1AA6 /* 3DconnexionClient.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = 3DconnexionClient.plist; path = Configuration/3DconnexionClient.plist; sourceTree = "<group>"; };
 		06899CE805E837DDD679FDD99B9F98A2 /* Axial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Axial.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		08FEE27890B0315722915459D5D6C330 /* ServiceClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ServiceClient.swift; path = ../../app/ServiceClient.swift; sourceTree = "<group>"; };
+		08FEE27890B0315722915459D5D6C330 /* ServiceClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ServiceClient.swift; sourceTree = "<group>"; };
 		0A6C92BFBB5E61F4D2740DE57F2E5257 /* libaxial-web.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libaxial-web.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0D7606C08882088E82E14E9AF5B3393F /* AxialApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AxialApp.swift; path = ../../app/AxialApp.swift; sourceTree = "<group>"; };
-		0F2130FBD798ACED3362E73728BDAEE4 /* web_setup.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = web_setup.mm; path = ../../src/web_setup.mm; sourceTree = "<group>"; };
-		133C3DEB7B64CCB917BD4F512F177A18 /* AppLifecycle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppLifecycle.swift; path = ../../app/AppLifecycle.swift; sourceTree = "<group>"; };
-		1413B84B815CAF9AD4B7A3E5B47CE93B /* connexion.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = connexion.mm; path = ../../src/connexion.mm; sourceTree = "<group>"; };
+		0D7606C08882088E82E14E9AF5B3393F /* AxialApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AxialApp.swift; sourceTree = "<group>"; };
+		0F2130FBD798ACED3362E73728BDAEE4 /* web_setup.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; path = web_setup.mm; sourceTree = "<group>"; };
+		133C3DEB7B64CCB917BD4F512F177A18 /* AppLifecycle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppLifecycle.swift; sourceTree = "<group>"; };
+		1413B84B815CAF9AD4B7A3E5B47CE93B /* connexion.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; path = connexion.mm; sourceTree = "<group>"; };
 		165819294840FE2AC63E44F9685F8DA9 /* libaxial-bridge.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libaxial-bridge.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B4250182D9770E3BCF70AB9D025E9C7 /* ServiceLifecycle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ServiceLifecycle.swift; path = ../../app/ServiceLifecycle.swift; sourceTree = "<group>"; };
-		1EBA34D24D154E2F38DB769C6F2E033D /* Diagnostics.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Diagnostics.swift; path = ../../app/Diagnostics.swift; sourceTree = "<group>"; };
-		29973F79A13D2A83077C63AA8CA7C523 /* TestNavigation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TestNavigation.swift; path = ../../app/TestNavigation.swift; sourceTree = "<group>"; };
+		19839E53845C7098964B2617 /* include */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = include; path = Sources/include; sourceTree = "<group>"; };
+		1B4250182D9770E3BCF70AB9D025E9C7 /* ServiceLifecycle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ServiceLifecycle.swift; sourceTree = "<group>"; };
+		1EBA34D24D154E2F38DB769C6F2E033D /* Diagnostics.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Diagnostics.swift; sourceTree = "<group>"; };
+		29973F79A13D2A83077C63AA8CA7C523 /* TestNavigation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TestNavigation.swift; sourceTree = "<group>"; };
+		34E11CC3E097CEAB775B4CAE /* third_party */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = third_party; path = Sources/third_party; sourceTree = "<group>"; };
 		3A5625F4BC26E11E1B687F7A220ACF94 /* bundle.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; name = bundle.sh; path = scripts/bundle.sh; sourceTree = "<group>"; };
-		471F2D24AC4E837D03EA510D3FA24DD4 /* NativeControls.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeControls.swift; path = ../../app/NativeControls.swift; sourceTree = "<group>"; };
+		471F2D24AC4E837D03EA510D3FA24DD4 /* NativeControls.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NativeControls.swift; sourceTree = "<group>"; };
 		5B14068B9792640A3BE312088C152E5A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
-		60CDE86D530B946539184BE39DF9298B /* AppInstance.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppInstance.swift; path = ../../app/AppInstance.swift; sourceTree = "<group>"; };
+		60CDE86D530B946539184BE39DF9298B /* AppInstance.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppInstance.swift; sourceTree = "<group>"; };
 		62D0E14EFFC48A4D4862B414BBD66271 /* 3DconnexionNavlib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = 3DconnexionNavlib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		68870F3424E5585ECB98EDBDFFBD65E9 /* web.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = web.mm; path = ../../src/web.mm; sourceTree = "<group>"; };
+		68870F3424E5585ECB98EDBDFFBD65E9 /* web.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; path = web.mm; sourceTree = "<group>"; };
 		6A0C2B8C37E61A7A7B054BC13ED9421C /* dependencies.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; name = dependencies.sh; path = scripts/dependencies.sh; sourceTree = "<group>"; };
-		720C12D3F8DC926197BCC766DA8C8310 /* bridge.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = bridge.cpp; path = ../../app/bridge.cpp; sourceTree = "<group>"; };
-		82A63D7B34DCA4D492A9B6BDBD6D6FA4 /* TestModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TestModel.swift; path = ../../app/TestModel.swift; sourceTree = "<group>"; };
+		720C12D3F8DC926197BCC766DA8C8310 /* bridge.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = bridge.cpp; sourceTree = "<group>"; };
+		82A63D7B34DCA4D492A9B6BDBD6D6FA4 /* TestModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TestModel.swift; sourceTree = "<group>"; };
 		85B9FC7EF35F09B32EAF11BD38F2E717 /* axialctl */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = text; path = axialctl; sourceTree = BUILT_PRODUCTS_DIR; };
-		8EC0ED4260615C2BF6257EE851F3F6E9 /* SceneTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SceneTest.swift; path = ../../app/SceneTest.swift; sourceTree = "<group>"; };
+		8EC0ED4260615C2BF6257EE851F3F6E9 /* SceneTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneTest.swift; sourceTree = "<group>"; };
 		9206301F0B22E1AC7386F35147D6249F /* axial-service */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = text; path = "axial-service"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9472211138CB1CC6F38E26974EA5EA0F /* WebSetup.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WebSetup.swift; path = ../../app/WebSetup.swift; sourceTree = "<group>"; };
+		9472211138CB1CC6F38E26974EA5EA0F /* WebSetup.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WebSetup.swift; sourceTree = "<group>"; };
 		95186179653E6B72AA75249EA3F6A38C /* Axial.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Axial.plist; path = Configuration/Axial.plist; sourceTree = "<group>"; };
-		B13DDE5B3F91F00997CE153FC9E7A5BF /* SessionLog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SessionLog.swift; path = ../../app/SessionLog.swift; sourceTree = "<group>"; };
-		B217EB063F742C18F44B26C6DFDE7C30 /* service.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = service.mm; path = ../../src/service.mm; sourceTree = "<group>"; };
-		B8B3124BF9B4CC3D7558E00C6F4EE365 /* DeviceCatalog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeviceCatalog.swift; path = ../../app/DeviceCatalog.swift; sourceTree = "<group>"; };
+		B13DDE5B3F91F00997CE153FC9E7A5BF /* SessionLog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SessionLog.swift; sourceTree = "<group>"; };
+		B217EB063F742C18F44B26C6DFDE7C30 /* service.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; path = service.mm; sourceTree = "<group>"; };
+		B8B3124BF9B4CC3D7558E00C6F4EE365 /* DeviceCatalog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeviceCatalog.swift; sourceTree = "<group>"; };
 		BB74E1ECE8590C26FF19B3F38B8D06F3 /* 3DconnexionNavlib.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = 3DconnexionNavlib.plist; path = Configuration/3DconnexionNavlib.plist; sourceTree = "<group>"; };
-		BFC7EC79D178BAE4A50B18C3E95FA257 /* Axial.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Axial.swift; path = ../../app/Axial.swift; sourceTree = "<group>"; };
+		BFC7EC79D178BAE4A50B18C3E95FA257 /* Axial.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Axial.swift; sourceTree = "<group>"; };
 		C5DE8D0D5C83E2D81EFEDA571A63F515 /* 3DconnexionClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = 3DconnexionClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C8FA5A74598FDF4205290BAC793DCABC /* AxisMeter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AxisMeter.swift; path = ../../app/AxisMeter.swift; sourceTree = "<group>"; };
+		C8FA5A74598FDF4205290BAC793DCABC /* AxisMeter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AxisMeter.swift; sourceTree = "<group>"; };
 		CC4F5A5379FAACC88C385532B5F7E3B8 /* framework.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; name = framework.sh; path = scripts/framework.sh; sourceTree = "<group>"; };
-		D2ABBF350F0DBA71CDF757CDE0E949C3 /* navlib.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = navlib.mm; path = ../../src/navlib.mm; sourceTree = "<group>"; };
+		D2ABBF350F0DBA71CDF757CDE0E949C3 /* navlib.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; path = navlib.mm; sourceTree = "<group>"; };
 		E598D8B82DD919D967307BCDEEB9976D /* assets.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; name = assets.sh; path = scripts/assets.sh; sourceTree = "<group>"; };
 		E9C1AF0F745A654FA0CF452BC90EED84 /* axial-web-setup */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = text; path = "axial-web-setup"; sourceTree = BUILT_PRODUCTS_DIR; };
-		EB104194F100F6856DB30133675A34EF /* ctl.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = ctl.cpp; path = ../../src/ctl.cpp; sourceTree = "<group>"; };
+		EB104194F100F6856DB30133675A34EF /* ctl.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; path = ctl.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -274,16 +276,43 @@
 			name = Configuration;
 			sourceTree = "<group>";
 		};
-		4BC0969B9DE907897F41DC88BB1EC5A8 /* Sources */ = {
+		443AD368354B53E5EF2AE094 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				720C12D3F8DC926197BCC766DA8C8310 /* bridge.cpp */,
 				68870F3424E5585ECB98EDBDFFBD65E9 /* web.mm */,
 				B217EB063F742C18F44B26C6DFDE7C30 /* service.mm */,
 				EB104194F100F6856DB30133675A34EF /* ctl.cpp */,
 				0F2130FBD798ACED3362E73728BDAEE4 /* web_setup.mm */,
 				1413B84B815CAF9AD4B7A3E5B47CE93B /* connexion.mm */,
 				D2ABBF350F0DBA71CDF757CDE0E949C3 /* navlib.mm */,
+			);
+			name = src;
+			path = Sources/src;
+			sourceTree = "<group>";
+		};
+		4BC0969B9DE907897F41DC88BB1EC5A8 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				9D07FEA943CA9650D9291A44 /* app */,
+				443AD368354B53E5EF2AE094 /* src */,
+				19839E53845C7098964B2617 /* include */,
+				34E11CC3E097CEAB775B4CAE /* third_party */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		760CE63C9EE8A5FB83BA35B03D54911E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C8F7DA9C27765A55D382B6F40CEC3E32 /* OS X */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9D07FEA943CA9650D9291A44 /* app */ = {
+			isa = PBXGroup;
+			children = (
+				720C12D3F8DC926197BCC766DA8C8310 /* bridge.cpp */,
 				60CDE86D530B946539184BE39DF9298B /* AppInstance.swift */,
 				133C3DEB7B64CCB917BD4F512F177A18 /* AppLifecycle.swift */,
 				BFC7EC79D178BAE4A50B18C3E95FA257 /* Axial.swift */,
@@ -300,15 +329,8 @@
 				29973F79A13D2A83077C63AA8CA7C523 /* TestNavigation.swift */,
 				9472211138CB1CC6F38E26974EA5EA0F /* WebSetup.swift */,
 			);
-			name = Sources;
-			sourceTree = "<group>";
-		};
-		760CE63C9EE8A5FB83BA35B03D54911E /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				C8F7DA9C27765A55D382B6F40CEC3E32 /* OS X */,
-			);
-			name = Frameworks;
+			name = app;
+			path = Sources/app;
 			sourceTree = "<group>";
 		};
 		9FFA01FEA4F31577034D712A8827B8AF /* Products */ = {
@@ -849,8 +871,8 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 					"$(PROJECT_DIR)/Build/External/_deps/axial_boost-src",
 					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
 				);
@@ -883,8 +905,8 @@
 				CODE_SIGNING_ALLOWED = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -914,8 +936,8 @@
 				CODE_SIGNING_ALLOWED = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -948,7 +970,7 @@
 				CODE_SIGNING_ALLOWED = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = /Library/Frameworks;
@@ -956,8 +978,8 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/3DconnexionNavlib.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -991,8 +1013,8 @@
 				CODE_SIGNING_ALLOWED = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -1023,8 +1045,8 @@
 				EXECUTABLE_PREFIX = lib;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "axial-bridge";
@@ -1105,11 +1127,12 @@
 				CODE_SIGNING_ALLOWED = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 0.2.3;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = 7N3LC4Q47Q;
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/Axial.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1136,8 +1159,8 @@
 				CODE_SIGNING_ALLOWED = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = axialctl;
@@ -1152,7 +1175,7 @@
 				CODE_SIGNING_ALLOWED = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = /Library/Frameworks;
@@ -1160,8 +1183,8 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/3DconnexionNavlib.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1215,8 +1238,8 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/Axial.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1258,7 +1281,7 @@
 				CODE_SIGNING_ALLOWED = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = /Library/Frameworks;
@@ -1266,8 +1289,8 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/3DconnexionClient.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1304,8 +1327,8 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 					"$(PROJECT_DIR)/Build/External/_deps/axial_boost-src",
 					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
 				);
@@ -1324,8 +1347,8 @@
 				EXECUTABLE_PREFIX = lib;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = "axial-bridge";
@@ -1356,8 +1379,8 @@
 				CODE_SIGNING_ALLOWED = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_NAME = axialctl;
@@ -1372,7 +1395,7 @@
 				CODE_SIGNING_ALLOWED = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = /Library/Frameworks;
@@ -1380,8 +1403,8 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/3DconnexionClient.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1482,8 +1505,8 @@
 				CODE_SIGNING_ALLOWED = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../include",
-					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Sources/include",
+					"$(PROJECT_DIR)/Sources/third_party/freecad",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

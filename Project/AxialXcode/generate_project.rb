@@ -17,20 +17,25 @@ project.build_configurations.each do |configuration|
 end
 
 sources = project.main_group.new_group('Sources')
+source_groups = %w[app src].to_h do |folder|
+  [folder, sources.new_group(folder, "Sources/#{folder}")]
+end
+%w[include third_party].each { |folder| sources.new_file("Sources/#{folder}") }
 configs = project.main_group.new_group('Configuration')
 scripts = project.main_group.new_group('Scripts')
 %w[dependencies assets bundle framework].each do |name|
   scripts.new_file("scripts/#{name}.sh")
 end
 
-def source(group, path)
-  group.new_file("../../#{path}")
+def source(groups, path)
+  folder, name = path.split('/', 2)
+  groups.fetch(folder).new_file(name)
 end
 
-def target(project, name, type, files, group, settings = {})
+def target(project, name, type, files, groups, settings = {})
   item = project.new_target(type, name, :osx, '13.0')
   files.each do |path|
-    item.source_build_phase.add_file_reference(source(group, path))
+    item.source_build_phase.add_file_reference(source(groups, path))
   end
   item.build_configurations.each do |configuration|
     configuration.build_settings.merge!(settings)
@@ -52,7 +57,7 @@ def link(target, other)
   target.frameworks_build_phase.add_file_reference(other.product_reference)
 end
 
-includes = '$(PROJECT_DIR)/../../include $(PROJECT_DIR)/../../third_party/freecad'
+includes = '$(PROJECT_DIR)/Sources/include $(PROJECT_DIR)/Sources/third_party/freecad'
 dependencies = '$(PROJECT_DIR)/Build/External'
 boost = "#{dependencies}/_deps/axial_boost-src"
 openssl = "#{dependencies}/tls/arm64/install/include"
@@ -66,20 +71,20 @@ script(bootstrap, 'Build pinned Boost and OpenSSL', 'dependencies')
 assets = project.new_aggregate_target('Assets', [], :osx, '13.0')
 script(assets, 'Generate icon and model', 'assets')
 
-bridge = target(project, 'axial-bridge', :static_library, ['app/bridge.cpp'], sources, common)
-web = target(project, 'axial-web', :static_library, ['src/web.mm'], sources,
+bridge = target(project, 'axial-bridge', :static_library, ['app/bridge.cpp'], source_groups, common)
+web = target(project, 'axial-web', :static_library, ['src/web.mm'], source_groups,
   common.merge('HEADER_SEARCH_PATHS' => "$(inherited) #{includes} #{boost} #{openssl}",
                'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) BOOST_ASIO_NO_DEPRECATED'))
 web.add_dependency(bootstrap)
 
-service = target(project, 'axial-service', :command_line_tool, ['src/service.mm'], sources,
+service = target(project, 'axial-service', :command_line_tool, ['src/service.mm'], source_groups,
   common.merge('LIBRARY_SEARCH_PATHS' => "$(inherited) #{dependencies}/tls",
                'OTHER_LDFLAGS' => '$(inherited) -lssl -lcrypto -lc++ -framework AppKit -framework IOKit -framework ApplicationServices -framework Foundation'))
 link(service, web)
 service.add_dependency(bootstrap)
 
-cli = target(project, 'axialctl', :command_line_tool, ['src/ctl.cpp'], sources, common)
-setup = target(project, 'axial-web-setup', :command_line_tool, ['src/web_setup.mm'], sources,
+cli = target(project, 'axialctl', :command_line_tool, ['src/ctl.cpp'], source_groups, common)
+setup = target(project, 'axial-web-setup', :command_line_tool, ['src/web_setup.mm'], source_groups,
   common.merge('HEADER_SEARCH_PATHS' => "$(inherited) #{includes} #{openssl}",
                'LIBRARY_SEARCH_PATHS' => "$(inherited) #{dependencies}/tls",
                'OTHER_LDFLAGS' => '$(inherited) -lssl -lcrypto -lc++ -framework Foundation -framework Security'))
@@ -89,10 +94,11 @@ framework_targets = %w[Client Navlib].map do |adapter|
   name = "3Dconnexion#{adapter}"
   file = adapter == 'Client' ? 'src/connexion.mm' : 'src/navlib.mm'
   frameworks = adapter == 'Client' ? '-framework Foundation' : '-framework AppKit -framework CoreVideo'
-  framework = target(project, name, :framework, [file], sources,
+  framework = target(project, name, :framework, [file], source_groups,
     common.merge('PRODUCT_BUNDLE_IDENTIFIER' => "pro.jest.#{name}",
                  'INFOPLIST_FILE' => "$(PROJECT_DIR)/Configuration/#{name}.plist",
                  'GENERATE_INFOPLIST_FILE' => 'NO', 'FRAMEWORK_VERSION' => 'A',
+                 'DEFINES_MODULE' => 'NO',
                  'DYLIB_INSTALL_NAME_BASE' => '/Library/Frameworks',
                  'OTHER_LDFLAGS' => "$(inherited) -lc++ #{frameworks}"))
   script(framework, 'Copy public headers and sign', 'framework')
@@ -102,7 +108,7 @@ end
 app_files = Dir.glob(File.join(root, 'app/*.swift')).sort.map do |path|
   "app/#{File.basename(path)}"
 end
-app = target(project, 'Axial', :application, app_files, sources,
+app = target(project, 'Axial', :application, app_files, source_groups,
   common.merge('INFOPLIST_FILE' => '$(PROJECT_DIR)/Configuration/Axial.plist',
                'GENERATE_INFOPLIST_FILE' => 'NO',
                'PRODUCT_BUNDLE_IDENTIFIER' => 'pro.jest.Axial',
