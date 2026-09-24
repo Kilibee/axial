@@ -30,7 +30,7 @@ axial_check "$root"
 # Open file descriptors are sufficient to block; CI also tests dlopen mappings.
 exec 9< "$plist"
 reject
-rg -q 'files are in use' "$temporary/result"
+grep -q 'files are in use' "$temporary/result"
 exec 9<&-
 axial_check "$root"
 mv "$framework" "$temporary/foreign"
