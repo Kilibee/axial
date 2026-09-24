@@ -1,0 +1,1617 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		17196A98F062E683960E75365DCD7643 /* Dependencies */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 09BFCC22594ADCF210BCA07B7B2F7D4A /* Build configuration list for PBXAggregateTarget "Dependencies" */;
+			buildPhases = (
+				883AD1D15BA3DC5E3096A3620C7E506B /* Build pinned Boost and OpenSSL */,
+			);
+			dependencies = (
+			);
+			name = Dependencies;
+			productName = Dependencies;
+		};
+		5AB3DBC1E15DC0D49CEA0A13263A5FB6 /* Assets */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 012162E4E631CC7DCEE7A03276691749 /* Build configuration list for PBXAggregateTarget "Assets" */;
+			buildPhases = (
+				21650B60D6021BA8AA1ED8820917E7E4 /* Generate icon and model */,
+			);
+			dependencies = (
+			);
+			name = Assets;
+			productName = Assets;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		064BC9F210264F921BD0129D55B93071 /* SceneTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC0ED4260615C2BF6257EE851F3F6E9 /* SceneTest.swift */; };
+		0BABDDB82275B7E2B7087F44E458D62B /* navlib.mm in Sources */ = {isa = PBXBuildFile; fileRef = D2ABBF350F0DBA71CDF757CDE0E949C3 /* navlib.mm */; };
+		17B06896548AFF03367A4FB576E25B66 /* WebSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9472211138CB1CC6F38E26974EA5EA0F /* WebSetup.swift */; };
+		2008E447454F682C65B1DB9B37391175 /* AxialApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7606C08882088E82E14E9AF5B3393F /* AxialApp.swift */; };
+		233AFA4B15E6F81C993FBCBE8F49F33B /* libaxial-web.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A6C92BFBB5E61F4D2740DE57F2E5257 /* libaxial-web.a */; };
+		33663A77AFFD10B4C4C65E1ECB2F7958 /* ServiceLifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4250182D9770E3BCF70AB9D025E9C7 /* ServiceLifecycle.swift */; };
+		3A0FB58F6321312FD8C2E5B7BA6522F1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B14068B9792640A3BE312088C152E5A /* Cocoa.framework */; };
+		3E7BEEC1C59EA8C2D8856C5FCC66EB2B /* bridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 720C12D3F8DC926197BCC766DA8C8310 /* bridge.cpp */; };
+		409F6658A3881E1D5A8E530CBFA79E4F /* libaxial-bridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 165819294840FE2AC63E44F9685F8DA9 /* libaxial-bridge.a */; };
+		44D4DA45609E4279E08524D77C1CBF4B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B14068B9792640A3BE312088C152E5A /* Cocoa.framework */; };
+		5112541DD460CD4025D3C2568E9AFF77 /* connexion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1413B84B815CAF9AD4B7A3E5B47CE93B /* connexion.mm */; };
+		8035FD72657655BEEB247C47FE4BE09C /* TestNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29973F79A13D2A83077C63AA8CA7C523 /* TestNavigation.swift */; };
+		86CBE80C18610C852106970885081357 /* AppInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CDE86D530B946539184BE39DF9298B /* AppInstance.swift */; };
+		8AE1B188F63AB83A4BDDBCB9A80C3FF8 /* NativeControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471F2D24AC4E837D03EA510D3FA24DD4 /* NativeControls.swift */; };
+		98D3ADC08B9AD76ED5D5D1B06FF085CA /* ctl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB104194F100F6856DB30133675A34EF /* ctl.cpp */; };
+		997084DB31CC9A9CF4B8708B61A1038F /* DeviceCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B3124BF9B4CC3D7558E00C6F4EE365 /* DeviceCatalog.swift */; };
+		99B4BE46293C1134C6966A7A95F1A7D4 /* Axial.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC7EC79D178BAE4A50B18C3E95FA257 /* Axial.swift */; };
+		9B286404348D77AA3E89F18BE2696B9D /* web_setup.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F2130FBD798ACED3362E73728BDAEE4 /* web_setup.mm */; };
+		A1B7DE07853AB6035CFD67A4DACE6545 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B14068B9792640A3BE312088C152E5A /* Cocoa.framework */; };
+		A4236CAF5E45A9B4A36B7505BB48A0B7 /* SessionLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13DDE5B3F91F00997CE153FC9E7A5BF /* SessionLog.swift */; };
+		A7CAEAC0ACC5F192155146266B24D9A3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B14068B9792640A3BE312088C152E5A /* Cocoa.framework */; };
+		AD25D224FCDCB6C630C764019684FACA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B14068B9792640A3BE312088C152E5A /* Cocoa.framework */; };
+		BDF023E6E05B1472C672405B601B71AA /* ServiceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08FEE27890B0315722915459D5D6C330 /* ServiceClient.swift */; };
+		BED5C3C4A9BACA5182B324D373F45E76 /* AppLifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133C3DEB7B64CCB917BD4F512F177A18 /* AppLifecycle.swift */; };
+		D4C188DDEE765460647A78933E6370BA /* AxisMeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FA5A74598FDF4205290BAC793DCABC /* AxisMeter.swift */; };
+		DB97FFC03F92D877F2C759C9D9158073 /* service.mm in Sources */ = {isa = PBXBuildFile; fileRef = B217EB063F742C18F44B26C6DFDE7C30 /* service.mm */; };
+		EA5F5F4E11252D7581B5B821326457C7 /* TestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A63D7B34DCA4D492A9B6BDBD6D6FA4 /* TestModel.swift */; };
+		EB8524E28D4A7EA165DDC2534597AB0C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B14068B9792640A3BE312088C152E5A /* Cocoa.framework */; };
+		FB21B3CD90F2E51E97EB98CD4C029108 /* Diagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBA34D24D154E2F38DB769C6F2E033D /* Diagnostics.swift */; };
+		FDEE6BA50CABD1226B4CDB05666C4739 /* web.mm in Sources */ = {isa = PBXBuildFile; fileRef = 68870F3424E5585ECB98EDBDFFBD65E9 /* web.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1B2DBC19E7BC7CB6FD215454D5DDB2A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 053478F191BD0F7643D04663967BADF4;
+			remoteInfo = "axial-web";
+		};
+		1FD15AD017D5158B01CB9DFFC16D6D96 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17196A98F062E683960E75365DCD7643;
+			remoteInfo = Dependencies;
+		};
+		4463212D503D40814616528250EAE83B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F3216687EF9AEFDE888BF5A1767F5CA;
+			remoteInfo = 3DconnexionClient;
+		};
+		47C954934415F181EF331320496232F9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F305429664AE2C48BE1AC5C0B9566DB8;
+			remoteInfo = axialctl;
+		};
+		48FCE6C5BC9587ABE66C02D10A7D6A9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DEBA596ED83A78339B399BD6133CE912;
+			remoteInfo = "axial-bridge";
+		};
+		63803B7E4ACA42EBE7A53F910BF6EF3E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 30C663EDB88C4D00D25586DE3AABA011;
+			remoteInfo = "axial-service";
+		};
+		6EF9E059748D8D289CE2CA1B969D99C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 37F14DD8739DD8F9FB8EBC8ABFB790DC;
+			remoteInfo = 3DconnexionNavlib;
+		};
+		9A4265CB0FAFC78052B76D9D73090FAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B14D065CD62D00B843693333BB5762C3;
+			remoteInfo = "axial-web-setup";
+		};
+		D896A0BB73357E11145452BD27912569 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17196A98F062E683960E75365DCD7643;
+			remoteInfo = Dependencies;
+		};
+		E566BFC629BAAC6C83EE0DA7F4F24839 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5AB3DBC1E15DC0D49CEA0A13263A5FB6;
+			remoteInfo = Assets;
+		};
+		F3F05F83CEF45E5CCBFCBA1F075927F6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17196A98F062E683960E75365DCD7643;
+			remoteInfo = Dependencies;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02F43D12B51010293EDDA9BE19DB1AA6 /* 3DconnexionClient.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = 3DconnexionClient.plist; path = Configuration/3DconnexionClient.plist; sourceTree = "<group>"; };
+		06899CE805E837DDD679FDD99B9F98A2 /* Axial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Axial.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		08FEE27890B0315722915459D5D6C330 /* ServiceClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ServiceClient.swift; path = ../../app/ServiceClient.swift; sourceTree = "<group>"; };
+		0A6C92BFBB5E61F4D2740DE57F2E5257 /* libaxial-web.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libaxial-web.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D7606C08882088E82E14E9AF5B3393F /* AxialApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AxialApp.swift; path = ../../app/AxialApp.swift; sourceTree = "<group>"; };
+		0F2130FBD798ACED3362E73728BDAEE4 /* web_setup.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = web_setup.mm; path = ../../src/web_setup.mm; sourceTree = "<group>"; };
+		133C3DEB7B64CCB917BD4F512F177A18 /* AppLifecycle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppLifecycle.swift; path = ../../app/AppLifecycle.swift; sourceTree = "<group>"; };
+		1413B84B815CAF9AD4B7A3E5B47CE93B /* connexion.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = connexion.mm; path = ../../src/connexion.mm; sourceTree = "<group>"; };
+		165819294840FE2AC63E44F9685F8DA9 /* libaxial-bridge.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libaxial-bridge.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B4250182D9770E3BCF70AB9D025E9C7 /* ServiceLifecycle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ServiceLifecycle.swift; path = ../../app/ServiceLifecycle.swift; sourceTree = "<group>"; };
+		1EBA34D24D154E2F38DB769C6F2E033D /* Diagnostics.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Diagnostics.swift; path = ../../app/Diagnostics.swift; sourceTree = "<group>"; };
+		29973F79A13D2A83077C63AA8CA7C523 /* TestNavigation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TestNavigation.swift; path = ../../app/TestNavigation.swift; sourceTree = "<group>"; };
+		3A5625F4BC26E11E1B687F7A220ACF94 /* bundle.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; name = bundle.sh; path = scripts/bundle.sh; sourceTree = "<group>"; };
+		471F2D24AC4E837D03EA510D3FA24DD4 /* NativeControls.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NativeControls.swift; path = ../../app/NativeControls.swift; sourceTree = "<group>"; };
+		5B14068B9792640A3BE312088C152E5A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		60CDE86D530B946539184BE39DF9298B /* AppInstance.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppInstance.swift; path = ../../app/AppInstance.swift; sourceTree = "<group>"; };
+		62D0E14EFFC48A4D4862B414BBD66271 /* 3DconnexionNavlib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = 3DconnexionNavlib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		68870F3424E5585ECB98EDBDFFBD65E9 /* web.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = web.mm; path = ../../src/web.mm; sourceTree = "<group>"; };
+		6A0C2B8C37E61A7A7B054BC13ED9421C /* dependencies.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; name = dependencies.sh; path = scripts/dependencies.sh; sourceTree = "<group>"; };
+		720C12D3F8DC926197BCC766DA8C8310 /* bridge.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = bridge.cpp; path = ../../app/bridge.cpp; sourceTree = "<group>"; };
+		82A63D7B34DCA4D492A9B6BDBD6D6FA4 /* TestModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TestModel.swift; path = ../../app/TestModel.swift; sourceTree = "<group>"; };
+		85B9FC7EF35F09B32EAF11BD38F2E717 /* axialctl */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = text; path = axialctl; sourceTree = BUILT_PRODUCTS_DIR; };
+		8EC0ED4260615C2BF6257EE851F3F6E9 /* SceneTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SceneTest.swift; path = ../../app/SceneTest.swift; sourceTree = "<group>"; };
+		9206301F0B22E1AC7386F35147D6249F /* axial-service */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = text; path = "axial-service"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9472211138CB1CC6F38E26974EA5EA0F /* WebSetup.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WebSetup.swift; path = ../../app/WebSetup.swift; sourceTree = "<group>"; };
+		95186179653E6B72AA75249EA3F6A38C /* Axial.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Axial.plist; path = Configuration/Axial.plist; sourceTree = "<group>"; };
+		B13DDE5B3F91F00997CE153FC9E7A5BF /* SessionLog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SessionLog.swift; path = ../../app/SessionLog.swift; sourceTree = "<group>"; };
+		B217EB063F742C18F44B26C6DFDE7C30 /* service.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = service.mm; path = ../../src/service.mm; sourceTree = "<group>"; };
+		B8B3124BF9B4CC3D7558E00C6F4EE365 /* DeviceCatalog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeviceCatalog.swift; path = ../../app/DeviceCatalog.swift; sourceTree = "<group>"; };
+		BB74E1ECE8590C26FF19B3F38B8D06F3 /* 3DconnexionNavlib.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = 3DconnexionNavlib.plist; path = Configuration/3DconnexionNavlib.plist; sourceTree = "<group>"; };
+		BFC7EC79D178BAE4A50B18C3E95FA257 /* Axial.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Axial.swift; path = ../../app/Axial.swift; sourceTree = "<group>"; };
+		C5DE8D0D5C83E2D81EFEDA571A63F515 /* 3DconnexionClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = 3DconnexionClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C8FA5A74598FDF4205290BAC793DCABC /* AxisMeter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AxisMeter.swift; path = ../../app/AxisMeter.swift; sourceTree = "<group>"; };
+		CC4F5A5379FAACC88C385532B5F7E3B8 /* framework.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; name = framework.sh; path = scripts/framework.sh; sourceTree = "<group>"; };
+		D2ABBF350F0DBA71CDF757CDE0E949C3 /* navlib.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = navlib.mm; path = ../../src/navlib.mm; sourceTree = "<group>"; };
+		E598D8B82DD919D967307BCDEEB9976D /* assets.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; name = assets.sh; path = scripts/assets.sh; sourceTree = "<group>"; };
+		E9C1AF0F745A654FA0CF452BC90EED84 /* axial-web-setup */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = text; path = "axial-web-setup"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB104194F100F6856DB30133675A34EF /* ctl.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = ctl.cpp; path = ../../src/ctl.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		27D1D0791A25490961CFB8D644267622 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A0FB58F6321312FD8C2E5B7BA6522F1 /* Cocoa.framework in Frameworks */,
+				233AFA4B15E6F81C993FBCBE8F49F33B /* libaxial-web.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3719E945A184A36F7C6CF7F7B9B6CF92 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		41823B6481F6B1DEA6482D665FD5210B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A7CAEAC0ACC5F192155146266B24D9A3 /* Cocoa.framework in Frameworks */,
+				409F6658A3881E1D5A8E530CBFA79E4F /* libaxial-bridge.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4A8DE9DFAC5966DE231533C420E5C5AD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B7DE07853AB6035CFD67A4DACE6545 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		95110C9D0410E64B9028B1B7E4FD99EC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B008E49A2A07AF6499ED4D8F8C3A5557 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD25D224FCDCB6C630C764019684FACA /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C41A26CEC31AFF7AE9FF0AE09ED05CFE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB8524E28D4A7EA165DDC2534597AB0C /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB6215BE2A0F3C4845590EF2CFEC7858 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44D4DA45609E4279E08524D77C1CBF4B /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		21E9D45432751CF35B98033654DBC85E = {
+			isa = PBXGroup;
+			children = (
+				9FFA01FEA4F31577034D712A8827B8AF /* Products */,
+				760CE63C9EE8A5FB83BA35B03D54911E /* Frameworks */,
+				4BC0969B9DE907897F41DC88BB1EC5A8 /* Sources */,
+				360F06B183A9399854752CAAEA5A96DD /* Configuration */,
+				CA47158E7647BD7F123FD62F22A06F32 /* Scripts */,
+			);
+			sourceTree = "<group>";
+		};
+		360F06B183A9399854752CAAEA5A96DD /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				95186179653E6B72AA75249EA3F6A38C /* Axial.plist */,
+				02F43D12B51010293EDDA9BE19DB1AA6 /* 3DconnexionClient.plist */,
+				BB74E1ECE8590C26FF19B3F38B8D06F3 /* 3DconnexionNavlib.plist */,
+			);
+			name = Configuration;
+			sourceTree = "<group>";
+		};
+		4BC0969B9DE907897F41DC88BB1EC5A8 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				720C12D3F8DC926197BCC766DA8C8310 /* bridge.cpp */,
+				68870F3424E5585ECB98EDBDFFBD65E9 /* web.mm */,
+				B217EB063F742C18F44B26C6DFDE7C30 /* service.mm */,
+				EB104194F100F6856DB30133675A34EF /* ctl.cpp */,
+				0F2130FBD798ACED3362E73728BDAEE4 /* web_setup.mm */,
+				1413B84B815CAF9AD4B7A3E5B47CE93B /* connexion.mm */,
+				D2ABBF350F0DBA71CDF757CDE0E949C3 /* navlib.mm */,
+				60CDE86D530B946539184BE39DF9298B /* AppInstance.swift */,
+				133C3DEB7B64CCB917BD4F512F177A18 /* AppLifecycle.swift */,
+				BFC7EC79D178BAE4A50B18C3E95FA257 /* Axial.swift */,
+				0D7606C08882088E82E14E9AF5B3393F /* AxialApp.swift */,
+				C8FA5A74598FDF4205290BAC793DCABC /* AxisMeter.swift */,
+				B8B3124BF9B4CC3D7558E00C6F4EE365 /* DeviceCatalog.swift */,
+				1EBA34D24D154E2F38DB769C6F2E033D /* Diagnostics.swift */,
+				471F2D24AC4E837D03EA510D3FA24DD4 /* NativeControls.swift */,
+				8EC0ED4260615C2BF6257EE851F3F6E9 /* SceneTest.swift */,
+				08FEE27890B0315722915459D5D6C330 /* ServiceClient.swift */,
+				1B4250182D9770E3BCF70AB9D025E9C7 /* ServiceLifecycle.swift */,
+				B13DDE5B3F91F00997CE153FC9E7A5BF /* SessionLog.swift */,
+				82A63D7B34DCA4D492A9B6BDBD6D6FA4 /* TestModel.swift */,
+				29973F79A13D2A83077C63AA8CA7C523 /* TestNavigation.swift */,
+				9472211138CB1CC6F38E26974EA5EA0F /* WebSetup.swift */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		760CE63C9EE8A5FB83BA35B03D54911E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C8F7DA9C27765A55D382B6F40CEC3E32 /* OS X */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9FFA01FEA4F31577034D712A8827B8AF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				165819294840FE2AC63E44F9685F8DA9 /* libaxial-bridge.a */,
+				0A6C92BFBB5E61F4D2740DE57F2E5257 /* libaxial-web.a */,
+				9206301F0B22E1AC7386F35147D6249F /* axial-service */,
+				85B9FC7EF35F09B32EAF11BD38F2E717 /* axialctl */,
+				E9C1AF0F745A654FA0CF452BC90EED84 /* axial-web-setup */,
+				C5DE8D0D5C83E2D81EFEDA571A63F515 /* 3DconnexionClient.framework */,
+				62D0E14EFFC48A4D4862B414BBD66271 /* 3DconnexionNavlib.framework */,
+				06899CE805E837DDD679FDD99B9F98A2 /* Axial.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C8F7DA9C27765A55D382B6F40CEC3E32 /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				5B14068B9792640A3BE312088C152E5A /* Cocoa.framework */,
+			);
+			name = "OS X";
+			sourceTree = "<group>";
+		};
+		CA47158E7647BD7F123FD62F22A06F32 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				6A0C2B8C37E61A7A7B054BC13ED9421C /* dependencies.sh */,
+				E598D8B82DD919D967307BCDEEB9976D /* assets.sh */,
+				3A5625F4BC26E11E1B687F7A220ACF94 /* bundle.sh */,
+				CC4F5A5379FAACC88C385532B5F7E3B8 /* framework.sh */,
+			);
+			name = Scripts;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		100C3B42A258657CB09C4030F8DFE752 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3A5DF983746C35C6221273CD1BFBB112 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		654AF1C8B57FEC1D42294163FA58CE12 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C96449A72B2FB36B00CDFDBF3E825AA5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		053478F191BD0F7643D04663967BADF4 /* axial-web */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FB237EE8512CE93DD33FB9E6A195F0C5 /* Build configuration list for PBXNativeTarget "axial-web" */;
+			buildPhases = (
+				654AF1C8B57FEC1D42294163FA58CE12 /* Headers */,
+				6F34120CF4BE87D908DA34B1679BF482 /* Sources */,
+				95110C9D0410E64B9028B1B7E4FD99EC /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				28120134ADFA553C1E5E1884F3F43F5D /* PBXTargetDependency */,
+			);
+			name = "axial-web";
+			productName = "axial-web";
+			productReference = 0A6C92BFBB5E61F4D2740DE57F2E5257 /* libaxial-web.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		06BC643F7D2B5E5E2A3C859CC663FC7B /* Axial */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0F8EB8381FCD147729FAD1A6BE783025 /* Build configuration list for PBXNativeTarget "Axial" */;
+			buildPhases = (
+				085FF0BD18CB688204EC13A1B601D995 /* Sources */,
+				41823B6481F6B1DEA6482D665FD5210B /* Frameworks */,
+				5817E3EF9B09E06AD1FA8BB651085D20 /* Resources */,
+				1F62562CCF95FBA2AE743EB64D0E614F /* Assemble and sign app bundle */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				68B617E444124ACF4633C5BAF1F32D14 /* PBXTargetDependency */,
+				DF951C25884901EC5FA488CE0B4CCB15 /* PBXTargetDependency */,
+				036DD656BABF382263C141921E5305F3 /* PBXTargetDependency */,
+				F8B69F19778CC0BDDA4A96CE974F53F8 /* PBXTargetDependency */,
+				9FA70B64A6F218FAC4B50C932F6E1158 /* PBXTargetDependency */,
+				F8D695774B9DC88128BBCFCC32EBC6E7 /* PBXTargetDependency */,
+				E84F0F24449BD459F597F5BABBF7DC84 /* PBXTargetDependency */,
+			);
+			name = Axial;
+			productName = Axial;
+			productReference = 06899CE805E837DDD679FDD99B9F98A2 /* Axial.app */;
+			productType = "com.apple.product-type.application";
+		};
+		30C663EDB88C4D00D25586DE3AABA011 /* axial-service */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 622D9C73EDD0C642BEC36DD84D3F2654 /* Build configuration list for PBXNativeTarget "axial-service" */;
+			buildPhases = (
+				5A6C323FE6A1E6034878F1137847DD80 /* Sources */,
+				27D1D0791A25490961CFB8D644267622 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ADF6B6483BD7E5123ED8789CFE754237 /* PBXTargetDependency */,
+				EDB788E917893E484D4A18F582BA0363 /* PBXTargetDependency */,
+			);
+			name = "axial-service";
+			productName = "axial-service";
+			productReference = 9206301F0B22E1AC7386F35147D6249F /* axial-service */;
+			productType = "com.apple.product-type.tool";
+		};
+		37F14DD8739DD8F9FB8EBC8ABFB790DC /* 3DconnexionNavlib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D01571E532807EF09364B84F352E6F8 /* Build configuration list for PBXNativeTarget "3DconnexionNavlib" */;
+			buildPhases = (
+				100C3B42A258657CB09C4030F8DFE752 /* Headers */,
+				42CDBA0D1AD2178709071121178E47C9 /* Sources */,
+				C41A26CEC31AFF7AE9FF0AE09ED05CFE /* Frameworks */,
+				46F1591D43104383301EB13D992CA0DB /* Resources */,
+				E0254C0419D06B1D002F6CFA3FBB5998 /* Copy public headers and sign */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = 3DconnexionNavlib;
+			productName = 3DconnexionNavlib;
+			productReference = 62D0E14EFFC48A4D4862B414BBD66271 /* 3DconnexionNavlib.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		4F3216687EF9AEFDE888BF5A1767F5CA /* 3DconnexionClient */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E4176398B440213F1382734271E06611 /* Build configuration list for PBXNativeTarget "3DconnexionClient" */;
+			buildPhases = (
+				3A5DF983746C35C6221273CD1BFBB112 /* Headers */,
+				37DA667978E046405726F0EF01DAB091 /* Sources */,
+				DB6215BE2A0F3C4845590EF2CFEC7858 /* Frameworks */,
+				F5A5DA37776A670AD01D6EFBAAE83703 /* Resources */,
+				63B4D5F4F4F980C3D0C928E2AC6DC247 /* Copy public headers and sign */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = 3DconnexionClient;
+			productName = 3DconnexionClient;
+			productReference = C5DE8D0D5C83E2D81EFEDA571A63F515 /* 3DconnexionClient.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B14D065CD62D00B843693333BB5762C3 /* axial-web-setup */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3CF55B036402B8749BFC999F1D942223 /* Build configuration list for PBXNativeTarget "axial-web-setup" */;
+			buildPhases = (
+				04E7618FA32FFA20FB5495ABDD25CF11 /* Sources */,
+				B008E49A2A07AF6499ED4D8F8C3A5557 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				88F9832BD1EA0E78A72BC57EFAD7E3C7 /* PBXTargetDependency */,
+			);
+			name = "axial-web-setup";
+			productName = "axial-web-setup";
+			productReference = E9C1AF0F745A654FA0CF452BC90EED84 /* axial-web-setup */;
+			productType = "com.apple.product-type.tool";
+		};
+		DEBA596ED83A78339B399BD6133CE912 /* axial-bridge */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BA72EE864962272CF175819C71F6A02 /* Build configuration list for PBXNativeTarget "axial-bridge" */;
+			buildPhases = (
+				C96449A72B2FB36B00CDFDBF3E825AA5 /* Headers */,
+				58EB5CB1496073F207BB485D2D9243C0 /* Sources */,
+				3719E945A184A36F7C6CF7F7B9B6CF92 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "axial-bridge";
+			productName = "axial-bridge";
+			productReference = 165819294840FE2AC63E44F9685F8DA9 /* libaxial-bridge.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		F305429664AE2C48BE1AC5C0B9566DB8 /* axialctl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7DD4B0FFE6AD40859C374EBF5AFF9D3E /* Build configuration list for PBXNativeTarget "axialctl" */;
+			buildPhases = (
+				B654961684AFF9BA6E2833228FDA0204 /* Sources */,
+				4A8DE9DFAC5966DE231533C420E5C5AD /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = axialctl;
+			productName = axialctl;
+			productReference = 85B9FC7EF35F09B32EAF11BD38F2E717 /* axialctl */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6959018D43E16C183C9C1906C60E5803 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1240;
+				LastUpgradeCheck = 2700;
+			};
+			buildConfigurationList = 0B846E9E2A6CE1C9FEFA98EA41895B64 /* Build configuration list for PBXProject "Axial" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 21E9D45432751CF35B98033654DBC85E;
+			productRefGroup = 9FFA01FEA4F31577034D712A8827B8AF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				17196A98F062E683960E75365DCD7643 /* Dependencies */,
+				5AB3DBC1E15DC0D49CEA0A13263A5FB6 /* Assets */,
+				DEBA596ED83A78339B399BD6133CE912 /* axial-bridge */,
+				053478F191BD0F7643D04663967BADF4 /* axial-web */,
+				30C663EDB88C4D00D25586DE3AABA011 /* axial-service */,
+				F305429664AE2C48BE1AC5C0B9566DB8 /* axialctl */,
+				B14D065CD62D00B843693333BB5762C3 /* axial-web-setup */,
+				4F3216687EF9AEFDE888BF5A1767F5CA /* 3DconnexionClient */,
+				37F14DD8739DD8F9FB8EBC8ABFB790DC /* 3DconnexionNavlib */,
+				06BC643F7D2B5E5E2A3C859CC663FC7B /* Axial */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		46F1591D43104383301EB13D992CA0DB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5817E3EF9B09E06AD1FA8BB651085D20 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F5A5DA37776A670AD01D6EFBAAE83703 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1F62562CCF95FBA2AE743EB64D0E614F /* Assemble and sign app bundle */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Assemble and sign app bundle";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PROJECT_DIR}/scripts/bundle.sh\"";
+		};
+		21650B60D6021BA8AA1ED8820917E7E4 /* Generate icon and model */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate icon and model";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PROJECT_DIR}/scripts/assets.sh\"\n";
+		};
+		63B4D5F4F4F980C3D0C928E2AC6DC247 /* Copy public headers and sign */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy public headers and sign";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PROJECT_DIR}/scripts/framework.sh\"";
+		};
+		883AD1D15BA3DC5E3096A3620C7E506B /* Build pinned Boost and OpenSSL */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build pinned Boost and OpenSSL";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PROJECT_DIR}/scripts/dependencies.sh\"\n";
+		};
+		E0254C0419D06B1D002F6CFA3FBB5998 /* Copy public headers and sign */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy public headers and sign";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PROJECT_DIR}/scripts/framework.sh\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		04E7618FA32FFA20FB5495ABDD25CF11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B286404348D77AA3E89F18BE2696B9D /* web_setup.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		085FF0BD18CB688204EC13A1B601D995 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				86CBE80C18610C852106970885081357 /* AppInstance.swift in Sources */,
+				BED5C3C4A9BACA5182B324D373F45E76 /* AppLifecycle.swift in Sources */,
+				99B4BE46293C1134C6966A7A95F1A7D4 /* Axial.swift in Sources */,
+				2008E447454F682C65B1DB9B37391175 /* AxialApp.swift in Sources */,
+				D4C188DDEE765460647A78933E6370BA /* AxisMeter.swift in Sources */,
+				997084DB31CC9A9CF4B8708B61A1038F /* DeviceCatalog.swift in Sources */,
+				FB21B3CD90F2E51E97EB98CD4C029108 /* Diagnostics.swift in Sources */,
+				8AE1B188F63AB83A4BDDBCB9A80C3FF8 /* NativeControls.swift in Sources */,
+				064BC9F210264F921BD0129D55B93071 /* SceneTest.swift in Sources */,
+				BDF023E6E05B1472C672405B601B71AA /* ServiceClient.swift in Sources */,
+				33663A77AFFD10B4C4C65E1ECB2F7958 /* ServiceLifecycle.swift in Sources */,
+				A4236CAF5E45A9B4A36B7505BB48A0B7 /* SessionLog.swift in Sources */,
+				EA5F5F4E11252D7581B5B821326457C7 /* TestModel.swift in Sources */,
+				8035FD72657655BEEB247C47FE4BE09C /* TestNavigation.swift in Sources */,
+				17B06896548AFF03367A4FB576E25B66 /* WebSetup.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		37DA667978E046405726F0EF01DAB091 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5112541DD460CD4025D3C2568E9AFF77 /* connexion.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		42CDBA0D1AD2178709071121178E47C9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0BABDDB82275B7E2B7087F44E458D62B /* navlib.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		58EB5CB1496073F207BB485D2D9243C0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E7BEEC1C59EA8C2D8856C5FCC66EB2B /* bridge.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5A6C323FE6A1E6034878F1137847DD80 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB97FFC03F92D877F2C759C9D9158073 /* service.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F34120CF4BE87D908DA34B1679BF482 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FDEE6BA50CABD1226B4CDB05666C4739 /* web.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B654961684AFF9BA6E2833228FDA0204 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				98D3ADC08B9AD76ED5D5D1B06FF085CA /* ctl.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		036DD656BABF382263C141921E5305F3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = axialctl;
+			target = F305429664AE2C48BE1AC5C0B9566DB8 /* axialctl */;
+			targetProxy = 47C954934415F181EF331320496232F9 /* PBXContainerItemProxy */;
+		};
+		28120134ADFA553C1E5E1884F3F43F5D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Dependencies;
+			target = 17196A98F062E683960E75365DCD7643 /* Dependencies */;
+			targetProxy = 1FD15AD017D5158B01CB9DFFC16D6D96 /* PBXContainerItemProxy */;
+		};
+		68B617E444124ACF4633C5BAF1F32D14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "axial-bridge";
+			target = DEBA596ED83A78339B399BD6133CE912 /* axial-bridge */;
+			targetProxy = 48FCE6C5BC9587ABE66C02D10A7D6A9C /* PBXContainerItemProxy */;
+		};
+		88F9832BD1EA0E78A72BC57EFAD7E3C7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Dependencies;
+			target = 17196A98F062E683960E75365DCD7643 /* Dependencies */;
+			targetProxy = F3F05F83CEF45E5CCBFCBA1F075927F6 /* PBXContainerItemProxy */;
+		};
+		9FA70B64A6F218FAC4B50C932F6E1158 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Assets;
+			target = 5AB3DBC1E15DC0D49CEA0A13263A5FB6 /* Assets */;
+			targetProxy = E566BFC629BAAC6C83EE0DA7F4F24839 /* PBXContainerItemProxy */;
+		};
+		ADF6B6483BD7E5123ED8789CFE754237 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "axial-web";
+			target = 053478F191BD0F7643D04663967BADF4 /* axial-web */;
+			targetProxy = 1B2DBC19E7BC7CB6FD215454D5DDB2A0 /* PBXContainerItemProxy */;
+		};
+		DF951C25884901EC5FA488CE0B4CCB15 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "axial-service";
+			target = 30C663EDB88C4D00D25586DE3AABA011 /* axial-service */;
+			targetProxy = 63803B7E4ACA42EBE7A53F910BF6EF3E /* PBXContainerItemProxy */;
+		};
+		E84F0F24449BD459F597F5BABBF7DC84 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = 3DconnexionNavlib;
+			target = 37F14DD8739DD8F9FB8EBC8ABFB790DC /* 3DconnexionNavlib */;
+			targetProxy = 6EF9E059748D8D289CE2CA1B969D99C8 /* PBXContainerItemProxy */;
+		};
+		EDB788E917893E484D4A18F582BA0363 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Dependencies;
+			target = 17196A98F062E683960E75365DCD7643 /* Dependencies */;
+			targetProxy = D896A0BB73357E11145452BD27912569 /* PBXContainerItemProxy */;
+		};
+		F8B69F19778CC0BDDA4A96CE974F53F8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "axial-web-setup";
+			target = B14D065CD62D00B843693333BB5762C3 /* axial-web-setup */;
+			targetProxy = 9A4265CB0FAFC78052B76D9D73090FAF /* PBXContainerItemProxy */;
+		};
+		F8D695774B9DC88128BBCFCC32EBC6E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = 3DconnexionClient;
+			target = 4F3216687EF9AEFDE888BF5A1767F5CA /* 3DconnexionClient */;
+			targetProxy = 4463212D503D40814616528250EAE83B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0E3BED71AD1C646E5416380AAE473F37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					BOOST_ASIO_NO_DEPRECATED,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Build/External/_deps/axial_boost-src",
+					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_NAME = "axial-web";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		16FA57A49CFACC09114C0A4BCD453CB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		24ABFE3482F6D6677268FB9F59E814FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Build/External/tls",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lssl",
+					"-lcrypto",
+					"-lc++",
+					"-framework",
+					Foundation,
+					"-framework",
+					Security,
+				);
+				PRODUCT_NAME = "axial-web-setup";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		27CBC0D3BF57C67AF52AEA9B67F8A4D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Build/External/tls",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lssl",
+					"-lcrypto",
+					"-lc++",
+					"-framework",
+					AppKit,
+					"-framework",
+					IOKit,
+					"-framework",
+					ApplicationServices,
+					"-framework",
+					Foundation,
+				);
+				PRODUCT_NAME = "axial-service";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		287FBFC3D4D801B107EDAE8B2F716BC7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = /Library/Frameworks;
+				FRAMEWORK_VERSION = A;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/3DconnexionNavlib.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lc++",
+					"-framework",
+					AppKit,
+					"-framework",
+					CoreVideo,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = pro.jest.3DconnexionNavlib;
+				PRODUCT_NAME = 3DconnexionNavlib;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		48B4E61B4DA6C4537C1A3B83C7B657CF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Build/External/tls",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lssl",
+					"-lcrypto",
+					"-lc++",
+					"-framework",
+					Foundation,
+					"-framework",
+					Security,
+				);
+				PRODUCT_NAME = "axial-web-setup";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4F0DB0C78331E2F0595EEDF72740FDC4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				EXECUTABLE_PREFIX = lib;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_NAME = "axial-bridge";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		5E4793857FC6FB5BD613073E671A740B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					arm64,
+					x86_64,
+				);
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		60EFE6E5562768BFD0555BE800088BD8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 0.2.3;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/Axial.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.2.3;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lc++",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -parse-as-library";
+				PRODUCT_BUNDLE_IDENTIFIER = pro.jest.Axial;
+				PRODUCT_NAME = Axial;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		63ED5E27D5D0C4C8CC4C4C0E1273E329 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_NAME = axialctl;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		69D82F7B044732E293C9B7626B228080 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = /Library/Frameworks;
+				FRAMEWORK_VERSION = A;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/3DconnexionNavlib.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lc++",
+					"-framework",
+					AppKit,
+					"-framework",
+					CoreVideo,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = pro.jest.3DconnexionNavlib;
+				PRODUCT_NAME = 3DconnexionNavlib;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		73E72D5A33766FB8F4F90F8D71F3733B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		88A68C172E271D8D9184A104505A9C11 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 0.2.3;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/Axial.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 0.2.3;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lc++",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -parse-as-library";
+				PRODUCT_BUNDLE_IDENTIFIER = pro.jest.Axial;
+				PRODUCT_NAME = Axial;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		9789D5708517B80B6AE80B4BBBCD38CF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		9F53D6492D3862DC6EF0C6AE3A5A3420 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = /Library/Frameworks;
+				FRAMEWORK_VERSION = A;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/3DconnexionClient.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lc++",
+					"-framework",
+					Foundation,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = pro.jest.3DconnexionClient;
+				PRODUCT_NAME = 3DconnexionClient;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		CAE82A517289F17C75A0B980F200A2F1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					BOOST_ASIO_NO_DEPRECATED,
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+					"$(PROJECT_DIR)/Build/External/_deps/axial_boost-src",
+					"$(PROJECT_DIR)/Build/External/tls/arm64/install/include",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_NAME = "axial-web";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		D28D3EB08BEB449C727000AAF20303ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				EXECUTABLE_PREFIX = lib;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_NAME = "axial-bridge";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		D61981B667C79F6F57472B0C134546D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		DA4E4863A2CF5EBD92FD22440E1BF471 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_NAME = axialctl;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		DA6FF32FB20E17D5D7FD5C271A7A131B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = /Library/Frameworks;
+				FRAMEWORK_VERSION = A;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				INFOPLIST_FILE = "$(PROJECT_DIR)/Configuration/3DconnexionClient.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lc++",
+					"-framework",
+					Foundation,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = pro.jest.3DconnexionClient;
+				PRODUCT_NAME = 3DconnexionClient;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		DECD11A1A6A5D208E08D42CE924FA474 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					arm64,
+					x86_64,
+				);
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		EA28A163F3D2130B2E93B0CE65639072 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../../include",
+					"$(PROJECT_DIR)/../../third_party/freecad",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Build/External/tls",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lssl",
+					"-lcrypto",
+					"-lc++",
+					"-framework",
+					AppKit,
+					"-framework",
+					IOKit,
+					"-framework",
+					ApplicationServices,
+					"-framework",
+					Foundation,
+				);
+				PRODUCT_NAME = "axial-service";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		012162E4E631CC7DCEE7A03276691749 /* Build configuration list for PBXAggregateTarget "Assets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D61981B667C79F6F57472B0C134546D6 /* Release */,
+				16FA57A49CFACC09114C0A4BCD453CB8 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		09BFCC22594ADCF210BCA07B7B2F7D4A /* Build configuration list for PBXAggregateTarget "Dependencies" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9789D5708517B80B6AE80B4BBBCD38CF /* Release */,
+				73E72D5A33766FB8F4F90F8D71F3733B /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0B846E9E2A6CE1C9FEFA98EA41895B64 /* Build configuration list for PBXProject "Axial" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DECD11A1A6A5D208E08D42CE924FA474 /* Debug */,
+				5E4793857FC6FB5BD613073E671A740B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0F8EB8381FCD147729FAD1A6BE783025 /* Build configuration list for PBXNativeTarget "Axial" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				60EFE6E5562768BFD0555BE800088BD8 /* Release */,
+				88A68C172E271D8D9184A104505A9C11 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3CF55B036402B8749BFC999F1D942223 /* Build configuration list for PBXNativeTarget "axial-web-setup" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24ABFE3482F6D6677268FB9F59E814FB /* Release */,
+				48B4E61B4DA6C4537C1A3B83C7B657CF /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3D01571E532807EF09364B84F352E6F8 /* Build configuration list for PBXNativeTarget "3DconnexionNavlib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				69D82F7B044732E293C9B7626B228080 /* Release */,
+				287FBFC3D4D801B107EDAE8B2F716BC7 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5BA72EE864962272CF175819C71F6A02 /* Build configuration list for PBXNativeTarget "axial-bridge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F0DB0C78331E2F0595EEDF72740FDC4 /* Release */,
+				D28D3EB08BEB449C727000AAF20303ED /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		622D9C73EDD0C642BEC36DD84D3F2654 /* Build configuration list for PBXNativeTarget "axial-service" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EA28A163F3D2130B2E93B0CE65639072 /* Release */,
+				27CBC0D3BF57C67AF52AEA9B67F8A4D5 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7DD4B0FFE6AD40859C374EBF5AFF9D3E /* Build configuration list for PBXNativeTarget "axialctl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA4E4863A2CF5EBD92FD22440E1BF471 /* Release */,
+				63ED5E27D5D0C4C8CC4C4C0E1273E329 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E4176398B440213F1382734271E06611 /* Build configuration list for PBXNativeTarget "3DconnexionClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F53D6492D3862DC6EF0C6AE3A5A3420 /* Release */,
+				DA6FF32FB20E17D5D7FD5C271A7A131B /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FB237EE8512CE93DD33FB9E6A195F0C5 /* Build configuration list for PBXNativeTarget "axial-web" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAE82A517289F17C75A0B980F200A2F1 /* Release */,
+				0E3BED71AD1C646E5416380AAE473F37 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6959018D43E16C183C9C1906C60E5803 /* Project object */;
+}
