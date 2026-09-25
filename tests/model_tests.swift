@@ -55,9 +55,10 @@ actor ResponsiveControl: ServiceRequesting {
         precondition(DeviceCatalog.layouts[0x046dc626]!.name == "SpaceNavigator")
         precondition(DeviceCatalog.layouts[0x046dc628]!.name == "SpaceNavigator for Notebooks")
         precondition(DeviceCatalog.layouts[0x256fc635]!.buttons.map(\.name) == ["Left", "Right"])
+        precondition(DeviceCatalog.layouts[0x256fc652]!.buttons.map(\.name) == ["Left", "Right"])
         precondition(DeviceCatalog.layouts[0x256fc633]!.buttons.count == 31)
         precondition(DeviceCatalog.layouts[0x046dc629]!.buttons.count == 21)
-        precondition(DeviceCatalog.layouts.count == 14 && DeviceCatalog.layouts[0xffffffff] == nil)
+        precondition(DeviceCatalog.layouts.count == 15 && DeviceCatalog.layouts[0xffffffff] == nil)
         precondition(DeviceCatalog.identity(vendor: -1, product: 1) == nil)
         let pro = DeviceCatalog.layouts[0x046dc62b]!
         precondition(pro.buttons.count == 15 && pro.buttons.first!.name == "1" && pro.buttons.first!.id == 12)
