@@ -108,11 +108,12 @@ final class TestRenderer: NSObject, SCNSceneRendererDelegate {
         idleReported = false
         if reset {navigation.reset();object.simdOrientation = simd_quatf(angle: 0, axis: SIMD3<Float>(0, 1, 0))}
         let dt = Float(lastTime == 0 ? 0 : min(max(time - lastTime, 0), 0.05));lastTime = time
-        navigation.advance(horizontal: axes[0] / 350, vertical: -axes[2] / 350, zoom: axes[1] / 350, seconds: Double(dt))
+        navigation.advance(horizontal: axes[0] / 350, vertical: -axes[2] / 350, zoom: -axes[1] / 350, seconds: Double(dt))
         camera.camera?.orthographicScale = navigation.scale
         let right = camera.simdWorldRight, up = camera.simdWorldUp
         object.position = SCNVector3(CGFloat(Double(right.x) * navigation.pan.x + Double(up.x) * navigation.pan.y), CGFloat(Double(right.y) * navigation.pan.x + Double(up.y) * navigation.pan.y), CGFloat(Double(right.z) * navigation.pan.x + Double(up.z) * navigation.pan.y))
-        let rotation = SIMD3<Float>(Float(-axes[3]), Float(axes[5]), Float(-axes[4])) / 350
+        // Rotating the model needs the opposite sign from rotating a camera around it.
+        let rotation = SIMD3<Float>(Float(axes[3]), Float(-axes[5]), Float(axes[4])) / 350
         let length = simd_length(rotation)
         if length > 0 {object.simdOrientation = simd_normalize(simd_quatf(angle: length * dt * 1.8, axis: rotation / length) * object.simdOrientation)}
     }
