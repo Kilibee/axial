@@ -67,7 +67,8 @@ struct AppCommand: Codable, Identifiable {var id: String; var label: String}
     @Published private(set) var configurationReady = false
     @Published var launchAtLogin = false
     @Published var selectedDevice: Int?
-    @Published var tab = 0
+    // Read by preview polling; the selection itself belongs to SettingsView.
+    var tab = 0
     @Published var recording: Int?
     @Published var buttonLog: [ButtonEntry] = []
     @Published var lostButtonLogs: UInt64 = 0
@@ -389,6 +390,7 @@ struct KeyRecorder: NSViewRepresentable {
 }
 struct SettingsView: View {
     @EnvironmentObject var model: Model
+    @State private var tab = 0
     private let axes = ["Left / right", "Near / far", "Up / down", "Tilt", "Roll", "Spin"]
     var body: some View {
         HSplitView {
@@ -432,11 +434,12 @@ struct SettingsView: View {
             }.padding(18).frame(minWidth: 230, idealWidth: 240, maxWidth: 280, maxHeight: .infinity, alignment: .topLeading)
 
             VStack(alignment: .leading) {
-                Picker("Settings", selection: $model.tab) {Text("Motion").tag(0);Text("Buttons").tag(1);Text("Test").tag(2);Text("Service & diagnostics").tag(3)}.pickerStyle(.segmented).labelsHidden().accessibilityLabel("Settings tabs")
+                Picker("Settings", selection: $tab) {Text("Motion").tag(0);Text("Buttons").tag(1);Text("Test").tag(2);Text("Service & diagnostics").tag(3)}.pickerStyle(.segmented).labelsHidden().accessibilityLabel("Settings tabs")
+                    .onChange(of: tab) {selected in model.tab = selected}
                 Group {
-                    if model.tab == 0 {motion.disabled(!model.configurationReady)}
-                    else if model.tab == 1 {buttons.disabled(!model.configurationReady)}
-                    else if model.tab == 2 {TestTab().environmentObject(model)}
+                    if tab == 0 {motion.disabled(!model.configurationReady)}
+                    else if tab == 1 {buttons.disabled(!model.configurationReady)}
+                    else if tab == 2 {TestTab().environmentObject(model)}
                     else {service}
                 }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading).padding(12).contentSurface()
                 if !model.message.isEmpty {
