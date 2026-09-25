@@ -79,7 +79,9 @@ inline constexpr DeviceSpec devices[]={
     {0x256f,0xc633,"SpaceMouse Enterprise",enterpriseButtons},
     {0x256f,0xc635,"SpaceMouse Compact",twoButtons},
     {0x256f,0xc636,"SpaceMouse Module",twoButtons},
-    {0x256f,0xc638,"SpaceMouse Pro Wireless BT (USB)",proButtons}
+    {0x256f,0xc638,"SpaceMouse Pro Wireless BT (USB)",proButtons},
+    // Receiver descriptor: report 1 six axes, report 3 two buttons.
+    {0x256f,0xc652,"SpaceMouse Wireless (Universal Receiver)",twoButtons}
 };
 inline const DeviceSpec* deviceSpec(uint16_t vendor,uint16_t product) {
     for(const auto& d:devices)if(d.vendor==vendor&&d.product==product)return &d;

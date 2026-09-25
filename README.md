@@ -150,6 +150,7 @@ controls exposed in Buttons.
 | SpaceMouse Compact | `256f:c635` | 2 |
 | SpaceMouse Module | `256f:c636` | 2 inputs |
 | SpaceMouse Pro Wireless BT (USB) | `256f:c638` | 15 |
+| SpaceMouse Wireless (Universal Receiver) | `256f:c652` | 2 |
 
 ¹ SpacePilot Pro shares physical keys between primary and alternate codes; LCD
 controls are not implemented. Enterprise's extended buttons have synthetic

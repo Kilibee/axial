@@ -12,7 +12,7 @@ static void deviceCases(const char* fixturePath) {
         {0x046d,0xc626,2},{0x046d,0xc627,15},{0x046d,0xc628,2},
         {0x046d,0xc629,21},{0x046d,0xc62b,15},{0x256f,0xc62e,2},
         {0x256f,0xc631,15},{0x256f,0xc633,31},{0x256f,0xc635,2},
-        {0x256f,0xc636,2},{0x256f,0xc638,15}
+        {0x256f,0xc636,2},{0x256f,0xc638,15},{0x256f,0xc652,2}
     };
     CHECK(std::size(sn::devices)==std::size(expected));
     std::set<uint32_t> identities;
@@ -27,7 +27,13 @@ static void deviceCases(const char* fixturePath) {
     }
     CHECK(std::string(sn::deviceSpec(0x046d,0xc626)->name)=="SpaceNavigator");
     CHECK(std::string(sn::deviceSpec(0x046d,0xc628)->name)=="SpaceNavigator for Notebooks");
-    CHECK(!sn::deviceSpec(0x256f,0xc652)); // Receiver packets are not this USB layout.
+    CHECK(std::string(sn::deviceSpec(0x256f,0xc652)->button(1)->name)=="Right");
+    {   // Universal Receiver descriptor: report 1 is six int16 axes, report 3 two bits plus padding.
+        sn::Decoder receiver;receiver.state.vendor=0x256f;receiver.state.product=0xc652;sn::Event event;
+        const uint8_t motion[]={1,0x5e,0x01,0xa2,0xfe,1,0,2,0,3,0,4,0};
+        CHECK(receiver.decode(motion,1,event)&&event.axes[0]==350&&event.axes[1]==-350&&event.axes[5]==4);
+        const uint8_t right[]={3,2,0};CHECK(receiver.decode(right,2,event)&&event.buttons==2);
+    }
     const std::map<std::string,uint32_t> sections={
         {"SpaceExplorer",0x046dc627},{"SpaceNavigator",0x046dc626},
         {"SpaceMouseCompact",0x256fc635},{"SpaceMousePro",0x046dc62b},
@@ -117,5 +123,5 @@ static void deviceCases(const char* fixturePath) {
     trackAllocations=true;
     for(int i=0;i<100000;++i){enterprise.decode(chord,i,event);checksum+=event.buttons;enterprise.decode(neutral,i,event);enterprise.decode(longNeutral,i,event);}
     trackAllocations=false;CHECK(allocations==prior&&checksum>0);
-    std::cout<<"Devices: 14 models, 73 upstream button replays, 31 Enterprise usages, long-press/chord release and zero allocations passed\n";
+    std::cout<<"Devices: 15 models, 73 upstream button replays, 31 Enterprise usages, long-press/chord release and zero allocations passed\n";
 }

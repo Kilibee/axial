@@ -237,10 +237,20 @@ int property(IOHIDDeviceRef d,CFStringRef key) {
     if(n&&CFGetTypeID(n)==CFNumberGetTypeID())CFNumberGetValue((CFNumberRef)n,kCFNumberIntType,&result);
     return result;
 }
+// The Universal Receiver's primary usage is vendor-defined; its multi-axis
+// collection is listed only among the interface's usage pairs.
+bool multiAxis(IOHIDDeviceRef d) {
+    if(property(d,CFSTR(kIOHIDPrimaryUsagePageKey))==1&&property(d,CFSTR(kIOHIDPrimaryUsageKey))==8)return true;
+    auto pairs=IOHIDDeviceGetProperty(d,CFSTR(kIOHIDDeviceUsagePairsKey));
+    if(!pairs||CFGetTypeID(pairs)!=CFArrayGetTypeID())return false;
+    for(NSDictionary* pair in (__bridge NSArray*)pairs)
+        if([pair isKindOfClass:NSDictionary.class]&&[pair[@(kIOHIDDeviceUsagePageKey)] isEqual:@1]&&[pair[@(kIOHIDDeviceUsageKey)] isEqual:@8])return true;
+    return false;
+}
 void added(void*,IOReturn result,void*,IOHIDDeviceRef d) {
     if(result!=kIOReturnSuccess){fprintf(stderr,"Cannot exclusively open device: 0x%x\n",result);return;}
     int vid=property(d,CFSTR(kIOHIDVendorIDKey)),pid=property(d,CFSTR(kIOHIDProductIDKey));
-    if(!deviceSpec(vid,pid)||property(d,CFSTR(kIOHIDPrimaryUsagePageKey))!=1||property(d,CFSTR(kIOHIDPrimaryUsageKey))!=8)return;
+    if(!deviceSpec(vid,pid)||!multiAxis(d))return;
     for(auto& h:hidDevices)if(!h.device) {
         h.device=d;CFRetain(d);h.decoder=Decoder{};h.previousButtons=0;h.suppressedButtons=0;
         h.led.reset();h.requestedLED=-1;
