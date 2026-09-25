@@ -75,6 +75,7 @@ struct AppCommand: Codable, Identifiable {var id: String; var label: String}
     @Published var buttonLogError: String?
     @Published var diagnostics = DiagnosticHistory()
     lazy var testRenderer = TestRenderer()
+    lazy var testSceneView = TestSceneView(frame: TestSceneView.placeholderFrame)
     private var nextLogID: UInt64 = 0
     private let client: any ServiceRequesting
     private var log: SessionLog?
