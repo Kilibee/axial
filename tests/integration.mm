@@ -35,7 +35,7 @@ void unregisterMessage(uint32_t,uint32_t,void* data){
 void added(uint32_t){++addedCount;}
 void removed(uint32_t){++removedCount;}
 void message(uint32_t,uint32_t type,void* data){auto s=static_cast<ConnexionDeviceState*>(data);CHECK(type==0x33645352);if(cleanupDuringMessage&&s->command==3){auto cleanup=cleanupDuringMessage;cleanupDuringMessage=nullptr;cleanup();++reentrantCleanups;return;}CHECK(s->client==client.load());if(s->command==3){lastX=s->axis[0];lastY=s->axis[1];++motionCount;}if(s->command==2){lastButtons=s->buttons;++buttonCount;}}
-bool waitFor(std::function<bool()> condition){for(int i=0;i<300;++i){if(condition())return true;CFRunLoopRunInMode(kCFRunLoopDefaultMode,0.01,true);}return condition();}
+bool waitFor(std::function<bool()> condition,int attempts=300){for(int i=0;i<attempts;++i){if(condition())return true;CFRunLoopRunInMode(kCFRunLoopDefaultMode,0.01,true);}return condition();}
 struct CameraState {
     navlib::matrix_t matrix{};
     std::atomic<int> frames=0,transactions=0,motion=0;
@@ -73,7 +73,7 @@ long setCamera(navlib::param_t param,navlib::property_t name,const navlib::value
 int main(int argc,char** argv){try {@autoreleasepool {
     if(argc!=4){std::cerr<<"usage: integration-tests service client-dylib navlib-dylib\n";return 2;}
     MockService service(argv[1],true);
-    CHECK(sn::request("{\"op\":\"status\"}").find("\"accessibility\":true")!=std::string::npos||sn::request("{\"op\":\"status\"}").find("\"accessibility\":false")!=std::string::npos);
+    CHECK(waitFor([]{auto status=sn::request("{\"op\":\"status\"}");return status.find("\"accessibility\":true")!=std::string::npos||status.find("\"accessibility\":false")!=std::string::npos;}));
     void* legacy=dlopen(argv[2],RTLD_NOW|RTLD_LOCAL);CHECK(legacy);
     auto install=reinterpret_cast<decltype(&SetConnexionHandlers)>(dlsym(legacy,"SetConnexionHandlers"));
     auto reg=reinterpret_cast<decltype(&RegisterConnexionClient)>(dlsym(legacy,"RegisterConnexionClient"));
@@ -263,8 +263,15 @@ int main(int argc,char** argv){try {@autoreleasepool {
     CHECK(waitFor([]{return sn::request("{\"op\":\"status\"}").find("\"clients\":2")!=std::string::npos;}));
     e.kind=sn::Kind::buttons;e.buttons=0;e.received=sn::now();CHECK(sn::writeAll(inject,&e,sizeof(e)));
     e.buttons=5;CHECK(sn::writeAll(inject,&e,sizeof(e)));e.buttons=0;CHECK(sn::writeAll(inject,&e,sizeof(e)));
-    e.kind=sn::Kind::motion;e.axes={321,-12,0,0,0,0};e.received=sn::now();CHECK(sn::writeAll(inject,&e,sizeof(e)));
-    CHECK(waitFor([]{double axes[6]{};uint32_t buttons=0;return AxialPreviewRead(1,axes,&buttons)&&axes[0]==321&&axes[1]==-12&&buttons==0;}));
+    e.kind=sn::Kind::motion;e.axes={321,-12,0,0,0,0};
+    // Preview motion expires after 250 ms. Refresh its event timestamp while
+    // waiting so a slow CI runner cannot make the sample stale before reading it.
+    bool previewMotion=false;
+    for(int attempt=0;attempt<10&&!previewMotion;++attempt){
+        e.received=sn::now();CHECK(sn::writeAll(inject,&e,sizeof(e)));
+        previewMotion=waitFor([]{double axes[6]{};uint32_t buttons=0;return AxialPreviewRead(1,axes,&buttons)&&axes[0]==321&&axes[1]==-12&&buttons==0;},30);
+    }
+    CHECK(previewMotion);
     uint64_t timestamp=0;uint32_t deviceID=0,changed=0,buttons=0,reason=0,identity=0,presses=0,releases=0;
     while(AxialPreviewPopLog(&timestamp,&deviceID,&changed,&buttons,&reason,&identity))if(deviceID==1&&reason==uint32_t(sn::Kind::buttons)){CHECK(identity==0x046dc627);presses|=changed&buttons;releases|=changed&~buttons;}
     CHECK((presses&5)==5&&(releases&5)==5);CHECK(AxialPreviewLostLogs()==0);

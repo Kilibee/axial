@@ -40,7 +40,7 @@ int main(int argc,char** argv){
     settings.dominant=true;f=sn::filter(e,settings);CHECK(f.axes[3]==100&&f.axes[2]==0);
     settings.rotation=false;f=sn::filter(e,settings);CHECK(f.axes[1]==-60&&f.axes[3]==0);
     settings.dominant=false;settings.gain.fill(20);e.axes.fill(-32768);f=sn::filter(e,settings);CHECK(f.axes[1]==-32768);
-    CHECK(sn::deviceSpec(0x046d,0xc627));CHECK(!sn::deviceSpec(0x256f,0xc671));CHECK(!sn::deviceSpec(0x256f,0xc652));
+    CHECK(sn::deviceSpec(0x046d,0xc627));CHECK(!sn::deviceSpec(0x256f,0xc671));
     sn::KeyState keys;std::array<int,32> mappings;mappings.fill(-1);mappings[0]=12;mappings[1]=12;
     std::array<uint64_t,32> modifiers{};modifiers[0]=0x100000;
     struct KeyEvent {int code;bool down;uint64_t modifiers;};std::array<KeyEvent,16> keyEvents{};size_t keyCount=0;

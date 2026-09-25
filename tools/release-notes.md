@@ -1,8 +1,8 @@
-## Fixes
+## Changes in v0.2.4
 
-- Fixes 3DconnexionJS compatibility with Onshape: its image catalog exceeded Axial's WebSocket and controller-property limits, preventing initialization and SpaceMouse navigation.
-- Accepts larger image catalogs while retaining bounded message and property storage, and reports WebSocket size and TLS failures in diagnostics.
-- Adds regression coverage for Onshape's initialization sequence, navigation after image upload, and oversized-request handling. Live navigation in Onshape was confirmed working.
+- Supports the SpaceMouse Wireless through the 3Dconnexion Universal Receiver (`256f:c652`), including motion and both buttons.
+- Aligns movement in the built-in test scene with conventions used by other 3D applications.
+- Makes the preview integration test tolerate delayed events and waits for the mock service to answer before testing it.
 
 ## Installation
 
