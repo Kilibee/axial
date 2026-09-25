@@ -36,6 +36,7 @@ struct ButtonEntry: Identifiable {
 }
 
 final class TestRenderer: NSObject, SCNSceneRendererDelegate {
+    private static let pauseRetryDelay = DispatchTimeInterval.milliseconds(1)
     let scene = SCNScene()
     let object = SCNNode()
     let camera = SCNNode()
@@ -79,7 +80,13 @@ final class TestRenderer: NSObject, SCNSceneRendererDelegate {
         }
     }
     func reset() {lock.lock();resetRequested = true;lock.unlock();notifyActivity()}
-    func pauseTiming() {frameLock.lock();lastTime = 0;idleReported = false;frameLock.unlock()}
+    func pauseTiming() {
+        guard frameLock.try() else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Self.pauseRetryDelay) { [weak self] in self?.pauseTiming() }
+            return
+        }
+        lastTime = 0;idleReported = false;frameLock.unlock()
+    }
     private func axes() -> SIMD8<Double> {
         lock.lock();let device = self.device, gain = self.gain, deadzone = self.deadzone, dominant = self.dominant;lock.unlock()
         var values = SIMD8<Double>.zero;var buttons: UInt32 = 0
@@ -121,6 +128,8 @@ final class TestRenderer: NSObject, SCNSceneRendererDelegate {
 // Closing settings keeps the menu-bar app alive, so dismantle alone is insufficient.
 // Render at full speed only while the test scene can actually be seen.
 final class TestSceneView: SCNView {
+    // Keep the Metal layer nonzero until SwiftUI gives its host a real size.
+    static let placeholderFrame = NSRect(x: 0, y: 0, width: 1, height: 1)
     weak var motionSource: TestRenderer?
     weak var frameDelegate: SCNSceneRendererDelegate?
     private var observers: [NSObjectProtocol] = []
@@ -133,20 +142,19 @@ final class TestSceneView: SCNView {
         super.viewDidMoveToWindow()
         let center = NotificationCenter.default
         observers.forEach(center.removeObserver);observers.removeAll()
+        guard let window else {updateRendering();return}
         observers.append(center.addObserver(forName: previewActivityNotification, object: nil, queue: .main) { [weak self] note in
             // Active frames already sample the latest input. Only wake a
             // sleeping scene here, avoiding work at the HID report rate.
             if self?.rendersContinuously == false || note.object is TestRenderer {self?.updateRendering()}
         })
-        if let window {
-            for name in [NSWindow.didChangeOcclusionStateNotification, NSWindow.didMiniaturizeNotification,
-                         NSWindow.didDeminiaturizeNotification, NSWindow.didBecomeKeyNotification] {
-                observers.append(center.addObserver(forName: name, object: window, queue: .main) { [weak self] _ in self?.updateRendering() })
-            }
-            observers.append(center.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: .main) { [weak self] _ in self?.watch(false);self?.setRendering(false) })
-            for name in [NSApplication.didHideNotification, NSApplication.didUnhideNotification] {
-                observers.append(center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in self?.updateRendering() })
-            }
+        for name in [NSWindow.didChangeOcclusionStateNotification, NSWindow.didMiniaturizeNotification,
+                     NSWindow.didDeminiaturizeNotification, NSWindow.didBecomeKeyNotification] {
+            observers.append(center.addObserver(forName: name, object: window, queue: .main) { [weak self] _ in self?.updateRendering() })
+        }
+        observers.append(center.addObserver(forName: NSWindow.willCloseNotification, object: window, queue: .main) { [weak self] _ in self?.watch(false);self?.setRendering(false) })
+        for name in [NSApplication.didHideNotification, NSApplication.didUnhideNotification] {
+            observers.append(center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in self?.updateRendering() })
         }
         updateRendering()
     }
@@ -169,19 +177,38 @@ final class TestSceneView: SCNView {
     override func viewDidUnhide() {super.viewDidUnhide();updateRendering()}
     deinit {if watching {previewWatch(false)};observers.forEach(NotificationCenter.default.removeObserver)}
 }
+final class TestSceneHost: NSView {
+    let sceneView: TestSceneView
+    init(sceneView: TestSceneView) {self.sceneView = sceneView;super.init(frame: .zero)}
+    required init?(coder: NSCoder) {fatalError("Use init(sceneView:)")}
+    override func layout() {
+        super.layout()
+        guard bounds.width > 0, bounds.height > 0 else {park();return}
+        if sceneView.superview !== self {sceneView.removeFromSuperview();addSubview(sceneView)}
+        sceneView.frame = bounds
+    }
+    func park() {
+        guard sceneView.superview === self else {return}
+        sceneView.removeFromSuperview();sceneView.updateRendering()
+    }
+}
 struct TestScene: NSViewRepresentable {
     let renderer: TestRenderer
+    let sceneView: TestSceneView
     let device: UInt32
     let profile: Profile
-    func makeNSView(context: Context) -> SCNView {
-        let view = TestSceneView();view.motionSource = renderer;view.scene = renderer.scene;view.pointOfView = renderer.camera;view.delegate = renderer
-        view.preferredFramesPerSecond = 120;view.antialiasingMode = .multisampling4X
-        view.backgroundColor = .clear;return view
+    func makeNSView(context: Context) -> TestSceneHost {
+        let host = TestSceneHost(sceneView: sceneView)
+        sceneView.autoresizingMask = []
+        sceneView.motionSource = renderer;sceneView.scene = renderer.scene;sceneView.pointOfView = renderer.camera
+        sceneView.preferredFramesPerSecond = 120;sceneView.antialiasingMode = .multisampling4X
+        sceneView.backgroundColor = .clear
+        return host
     }
-    func updateNSView(_ view: SCNView, context: Context) {renderer.configure(device: device, profile: profile)}
-    static func dismantleNSView(_ view: SCNView, coordinator: ()) {
-        if let view = view as? TestSceneView {view.motionSource = nil;view.updateRendering()}
-        view.rendersContinuously = false;view.isPlaying = false;view.delegate = nil
+    func updateNSView(_ host: TestSceneHost, context: Context) {renderer.configure(device: device, profile: profile)}
+    static func dismantleNSView(_ host: TestSceneHost, coordinator: ()) {
+        guard host.sceneView.superview === host else {return}
+        host.park();host.sceneView.motionSource = nil
     }
 }
 struct TestTab: View {
@@ -195,7 +222,7 @@ struct TestTab: View {
                     Button("Reset object") {model.testRenderer.reset()}
                         .help("Restore position, rotation and zoom")
                 }
-                TestScene(renderer: model.testRenderer, device: UInt32(model.device?.id ?? 0), profile: model.profile)
+                TestScene(renderer: model.testRenderer, sceneView: model.testSceneView, device: UInt32(model.device?.id ?? 0), profile: model.profile)
                     .frame(height: max(190, space.size.height * 0.53))
                     .overlay(alignment: .bottomLeading) {
                         Text("Toy Car · Guido Odendahl & Eric Chadwick · CC0")
