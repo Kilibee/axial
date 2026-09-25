@@ -2,7 +2,7 @@
 
 - Supports the SpaceMouse Wireless through the 3Dconnexion Universal Receiver (`256f:c652`), including motion and both buttons.
 - Aligns movement in the built-in test scene with conventions used by other 3D applications.
-- Makes the preview integration test tolerate delayed event delivery on busy CI runners.
+- Makes the preview integration test tolerate delayed events and waits for the mock service to answer before testing it.
 
 ## Installation
 

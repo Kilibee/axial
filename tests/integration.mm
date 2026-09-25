@@ -73,7 +73,7 @@ long setCamera(navlib::param_t param,navlib::property_t name,const navlib::value
 int main(int argc,char** argv){try {@autoreleasepool {
     if(argc!=4){std::cerr<<"usage: integration-tests service client-dylib navlib-dylib\n";return 2;}
     MockService service(argv[1],true);
-    CHECK(sn::request("{\"op\":\"status\"}").find("\"accessibility\":true")!=std::string::npos||sn::request("{\"op\":\"status\"}").find("\"accessibility\":false")!=std::string::npos);
+    CHECK(waitFor([]{auto status=sn::request("{\"op\":\"status\"}");return status.find("\"accessibility\":true")!=std::string::npos||status.find("\"accessibility\":false")!=std::string::npos;}));
     void* legacy=dlopen(argv[2],RTLD_NOW|RTLD_LOCAL);CHECK(legacy);
     auto install=reinterpret_cast<decltype(&SetConnexionHandlers)>(dlsym(legacy,"SetConnexionHandlers"));
     auto reg=reinterpret_cast<decltype(&RegisterConnexionClient)>(dlsym(legacy,"RegisterConnexionClient"));
