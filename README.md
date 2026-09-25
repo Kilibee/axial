@@ -130,9 +130,9 @@ To uninstall, disable **Start at login**, quit Axial, then run
 
 ## Supported devices
 
-Axial recognizes these USB models. **Wireless models require a USB cable**;
-Bluetooth and wireless receivers are not supported. Counts refer to physical HID
-controls exposed in Buttons.
+Axial recognizes these USB device identities, including the SpaceMouse Wireless
+through its Universal Receiver. Bluetooth connections are not supported. Counts
+refer to physical HID controls exposed in Buttons.
 
 | Device | USB vendor:product | Buttons |
 | --- | --- | ---: |
