@@ -125,6 +125,11 @@ Axial closes the web listener.
    may require renewed permission.
 5. Reopen your CAD application. In Fusion select the **Latest** SpaceMouse driver.
 
+In **Motion**, the Navigation selector changes camera rotation for native Navlib
+and web integrations. Legacy 3Dconnexion Client API applications receive motion
+axes and choose their own navigation behavior. The settings demo rotates its
+model and uses near/far to zoom; it does not use the Navigation selector.
+
 To uninstall, disable **Start at login**, quit Axial, then run
 `mise run uninstall`. Saved profiles are retained.
 
